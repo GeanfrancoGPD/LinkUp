@@ -1,0 +1,153 @@
+{
+  "getUsuarios": {
+    "query": "SELECT id_usuario, nombres, apellidos, nombre_usuario, correo, telefono, fecha_nacimiento, sexo, biografia, foto_perfil, estado, fecha_registro FROM usuarios ORDER BY id_usuario",
+    "structure_params": {},
+    "orderArray": []
+  },
+
+  "getUsuarioPorId": {
+    "query": "SELECT * FROM usuarios WHERE id_usuario = $1",
+    "structure_params": {
+      "id_usuario": "number"
+    },
+    "orderArray": ["id_usuario"]
+  },
+
+  "getUsuarioPorNombreUsuario": {
+    "query": "SELECT * FROM usuarios WHERE nombre_usuario = $1",
+    "structure_params": {
+      "nombre_usuario": "string"
+    },
+    "orderArray": ["nombre_usuario"]
+  },
+
+  "crearUsuario": {
+    "query": "INSERT INTO usuarios (nombres, apellidos, nombre_usuario, correo, contrasena, telefono, fecha_nacimiento, sexo, biografia, foto_perfil) VALUES ($1, $2, $3, $4, $5, $6, $7, $8::enum_sexo, $9, $10) RETURNING id_usuario",
+    "structure_params": {
+      "nombres": "string",
+      "apellidos": "string",
+      "nombre_usuario": "string",
+      "correo": "string",
+      "contrasena": "string",
+      "telefono": "string",
+      "fecha_nacimiento": "date",
+      "sexo": "string",
+      "biografia": "string",
+      "foto_perfil": "string"
+    },
+    "orderArray": [
+      "nombres",
+      "apellidos",
+      "nombre_usuario",
+      "correo",
+      "contrasena",
+      "telefono",
+      "fecha_nacimiento",
+      "sexo",
+      "biografia",
+      "foto_perfil"
+    ]
+  },
+
+  "actualizarUsuario": {
+    "query": "UPDATE usuarios SET nombres=$1, apellidos=$2, telefono=$3, biografia=$4, foto_perfil=$5, estado=$6::enum_estado_usuario WHERE id_usuario=$7",
+    "structure_params": {
+      "nombres": "string",
+      "apellidos": "string",
+      "telefono": "string",
+      "biografia": "string",
+      "foto_perfil": "string",
+      "estado": "string",
+      "id_usuario": "number"
+    },
+    "orderArray": [
+      "nombres",
+      "apellidos",
+      "telefono",
+      "biografia",
+      "foto_perfil",
+      "estado",
+      "id_usuario"
+    ]
+  },
+
+  "eliminarUsuario": {
+    "query": "DELETE FROM usuarios WHERE id_usuario = $1",
+    "structure_params": {
+      "id_usuario": "number"
+    },
+    "orderArray": ["id_usuario"]
+  },
+
+  "crearSolicitud": {
+    "query": "INSERT INTO solicitudes_amistad (id_usuario_envia, id_usuario_recibe) VALUES ($1, $2) RETURNING id_solicitud",
+    "structure_params": {
+      "id_usuario_envia": "number",
+      "id_usuario_recibe": "number"
+    },
+    "orderArray": ["id_usuario_envia", "id_usuario_recibe"]
+  },
+
+  "aceptarSolicitud": {
+    "query": "UPDATE solicitudes_amistad SET estado='Aceptada'::enum_estado_solicitud WHERE id_solicitud=$1",
+    "structure_params": {
+      "id_solicitud": "number"
+    },
+    "orderArray": ["id_solicitud"]
+  },
+
+  "rechazarSolicitud": {
+    "query": "UPDATE solicitudes_amistad SET estado='Rechazada'::enum_estado_solicitud WHERE id_solicitud=$1",
+    "structure_params": {
+      "id_solicitud": "number"
+    },
+    "orderArray": ["id_solicitud"]
+  },
+
+  "crearChat": {
+    "query": "INSERT INTO chats (tipo_chat) VALUES ($1::enum_tipo_chat) RETURNING id_chat",
+    "structure_params": {
+      "tipo_chat": "string"
+    },
+    "orderArray": ["tipo_chat"]
+  },
+
+  "agregarParticipante": {
+    "query": "INSERT INTO participantes_chat (id_chat, id_usuario) VALUES ($1, $2) RETURNING id_participante",
+    "structure_params": {
+      "id_chat": "number",
+      "id_usuario": "number"
+    },
+    "orderArray": ["id_chat", "id_usuario"]
+  },
+
+  "guardarMensaje": {
+    "query": "INSERT INTO mensajes (id_chat, id_usuario, contenido, tipo) VALUES ($1, $2, $3, $4::enum_tipo_mensaje) RETURNING id_mensaje",
+    "structure_params": {
+      "id_chat": "number",
+      "id_usuario": "number",
+      "contenido": "string",
+      "tipo": "string"
+    },
+    "orderArray": ["id_chat", "id_usuario", "contenido", "tipo"]
+  },
+
+  "guardarImagen": {
+    "query": "INSERT INTO imagenes_mensajes (id_mensaje, ruta_imagen, nombre_archivo, tamano_kb) VALUES ($1, $2, $3, $4) RETURNING id_imagen",
+    "structure_params": {
+      "id_mensaje": "number",
+      "ruta_imagen": "string",
+      "nombre_archivo": "string",
+      "tamano_kb": "number"
+    },
+    "orderArray": ["id_mensaje", "ruta_imagen", "nombre_archivo", "tamano_kb"]
+  },
+
+  "obtenerMensajesChat": {
+    "query": "SELECT m.id_mensaje, m.id_chat, m.id_usuario, CONCAT(u.nombres, ' ', u.apellidos) AS usuario, m.contenido, m.tipo, i.ruta_imagen, m.fecha_envio FROM mensajes m INNER JOIN usuarios u ON u.id_usuario = m.id_usuario LEFT JOIN imagenes_mensajes i ON i.id_mensaje = m.id_mensaje WHERE m.id_chat = $1 ORDER BY m.fecha_envio ASC",
+    "structure_params": {
+      "id_chat": "number"
+    },
+    "orderArray": ["id_chat"]
+  }
+}
