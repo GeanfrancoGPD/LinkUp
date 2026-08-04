@@ -1,6 +1,6 @@
 // src/services/Session.ts
 import { Request, Response } from "express";
-import { SessionUser } from "../interfaces/express-session"; // O tu carpeta de interfaces
+import { SessionUser } from "../types/express-session"; // O tu carpeta de interfaces
 
 export interface SessionObject {
   request: Request;
