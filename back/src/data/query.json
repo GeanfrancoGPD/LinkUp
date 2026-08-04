@@ -21,6 +21,14 @@
     "orderArray": ["nombre_usuario"]
   },
 
+  "getUsuarioPorCorreo": {
+    "query": "SELECT * FROM usuarios WHERE correo = $1",
+    "structure_params": {
+      "correo": "string"
+    },
+    "orderArray": ["correo"]
+  },
+
   "crearUsuario": {
     "query": "INSERT INTO usuarios (nombres, apellidos, nombre_usuario, correo, contrasena, telefono, fecha_nacimiento, sexo, biografia, foto_perfil) VALUES ($1, $2, $3, $4, $5, $6, $7, $8::enum_sexo, $9, $10) RETURNING id_usuario",
     "structure_params": {

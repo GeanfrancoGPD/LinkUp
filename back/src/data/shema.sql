@@ -1,6 +1,6 @@
 -- Eliminación y creación de la base de datos
 -- DROP DATABASE IF EXISTS amigos_app;
--- CREATE DATABASE amigos_app WITH ENCODING = 'UTF8';
+CREATE DATABASE amigos_app WITH ENCODING = 'UTF8';
 -- NOTA: En la terminal de PostgreSQL (psql), ejecuta `\c amigos_app` para conectarte a la BD creada antes de ejecutar las tablas.
 
 -- ===========================
