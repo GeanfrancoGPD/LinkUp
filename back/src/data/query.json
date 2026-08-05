@@ -104,12 +104,29 @@
     "orderArray": ["id_solicitud"]
   },
 
+  "getSolicitudesPendientes": {
+    "query": "SELECT s.id_solicitud, s.id_usuario_envia, s.id_usuario_recibe, s.estado, s.fecha_solicitud, CONCAT(u.nombres, ' ', u.apellidos) AS nombre_usuario_envia FROM solicitudes_amistad s INNER JOIN usuarios u ON u.id_usuario = s.id_usuario_envia WHERE s.id_usuario_recibe = $1 AND s.estado = 'Pendiente'::enum_estado_solicitud ORDER BY s.fecha_solicitud DESC",
+    "structure_params": {
+      "id_usuario": "number"
+    },
+    "orderArray": ["id_usuario"]
+  },
+
   "rechazarSolicitud": {
     "query": "UPDATE solicitudes_amistad SET estado='Rechazada'::enum_estado_solicitud WHERE id_solicitud=$1",
     "structure_params": {
       "id_solicitud": "number"
     },
     "orderArray": ["id_solicitud"]
+  },
+
+  "cancelarSolicitud": {
+    "query": "DELETE FROM solicitudes_amistad WHERE id_solicitud = $1 AND id_usuario_envia = $2",
+    "structure_params": {
+      "id_solicitud": "number",
+      "id_usuario_envia": "number"
+    },
+    "orderArray": ["id_solicitud", "id_usuario_envia"]
   },
 
   "crearChat": {
@@ -157,5 +174,13 @@
       "id_chat": "number"
     },
     "orderArray": ["id_chat"]
+  },
+  "obtenerChatPrivado": {
+    "query": "SELECT p1.id_chat FROM participantes_chat p1 INNER JOIN participantes_chat p2 ON p1.id_chat = p2.id_chat INNER JOIN chats c ON c.id_chat = p1.id_chat WHERE p1.id_usuario = $1 AND p2.id_usuario = $2 AND c.tipo_chat = 'Privado'",
+    "structure_params": {
+      "id_usuario_1": "number",
+      "id_usuario_2": "number"
+    },
+    "orderArray": ["id_usuario_1", "id_usuario_2"]
   }
 }
