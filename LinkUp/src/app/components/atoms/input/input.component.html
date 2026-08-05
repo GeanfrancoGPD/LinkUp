@@ -1,0 +1,13 @@
+<div class="atom-input">
+  <label *ngIf="label" class="atom-input__label">{{ label }}</label>
+  <input
+    class="atom-input__field"
+    [type]="type"
+    [placeholder]="placeholder"
+    [value]="value"
+    [disabled]="disabled"
+    (input)="onInput($event)"
+    (blur)="onTouched()"
+  />
+  <span class="atom-input__error">{{ error }}</span>
+</div>

@@ -1,0 +1,5 @@
+<div class="atom-avatar" [class]="sizeClass">
+  <img *ngIf="src" class="atom-avatar__img" [src]="src" [alt]="name" />
+  <span *ngIf="!src" class="atom-avatar__fallback">{{ initials }}</span>
+  <div *ngIf="badge" class="atom-avatar__badge"></div>
+</div>

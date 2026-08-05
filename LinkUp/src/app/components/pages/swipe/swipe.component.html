@@ -1,0 +1,26 @@
+<div class="page-swipe">
+  <div class="page-swipe__header">
+    <button class="page-swipe__back" routerLink="/home"><i class="fas fa-arrow-left"></i></button>
+    <h1>Solicitudes</h1>
+  </div>
+
+  <div class="page-swipe__container">
+    <div *ngIf="!empty" class="page-swipe__list">
+      <div *ngFor="let suggestion of suggestions" class="page-swipe__card-wrapper">
+        <molecule-friend-card
+          [name]="suggestion.firstName + ' ' + suggestion.lastName"
+          [bio]="suggestion.bio || 'Explorando nuevas conexiones'"
+          [mutual]="suggestion.mutual || 0"
+          [avatar]="suggestion.avatar"
+          (accept)="accept(suggestion.id)"
+          (reject)="reject(suggestion.id)"
+        ></molecule-friend-card>
+      </div>
+    </div>
+
+    <div *ngIf="empty" class="page-swipe__empty">
+      <p>No hay más sugerencias</p>
+      <button class="page-swipe__back-btn" routerLink="/home">Volver al inicio</button>
+    </div>
+  </div>
+</div>

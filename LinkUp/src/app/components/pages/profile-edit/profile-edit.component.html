@@ -1,0 +1,27 @@
+<div class="page-profile-edit">
+  <div class="page-profile-edit__header">
+    <button class="page-profile-edit__back" routerLink="/profile"><i class="fas fa-arrow-left"></i></button>
+    <h1>Editar perfil</h1>
+  </div>
+  <form (ngSubmit)="onSubmit()" class="page-profile-edit__form">
+    <div class="page-profile-edit__avatar">
+      <atom-image-uploader (imageSelected)="onAvatarSelected($event)"></atom-image-uploader>
+    </div>
+    <div class="page-profile-edit__field">
+      <atom-input [(ngModel)]="name" name="name" label="Nombre Completo" placeholder="Tu nombre"></atom-input>
+    </div>
+    <div class="page-profile-edit__field">
+      <atom-input [(ngModel)]="username" name="username" label="Nombre de Usuario" placeholder="username"></atom-input>
+    </div>
+    <div class="page-profile-edit__field">
+      <atom-input [(ngModel)]="email" name="email" type="email" label="Correo Electrónico" placeholder="tu@email.com"></atom-input>
+    </div>
+    <div class="page-profile-edit__field">
+      <atom-input [(ngModel)]="bio" name="bio" label="Sobre mí" placeholder="Cuéntanos sobre ti"></atom-input>
+    </div>
+    <div class="page-profile-edit__actions">
+      <atom-button type="submit" label="Guardar cambios" variant="primary" fullWidth></atom-button>
+      <button type="button" class="page-profile-edit__delete" (click)="deleteAccount()"><i class="fas fa-trash"></i> Eliminar cuenta</button>
+    </div>
+  </form>
+</div>

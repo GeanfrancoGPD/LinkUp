@@ -1,0 +1,14 @@
+<div class="molecule-friend-card" [ngClass]="{ 'molecule-friend-card--large': large, 'molecule-friend-card--accepting': actionState === 'accept', 'molecule-friend-card--rejecting': actionState === 'reject' }">
+  <div class="molecule-friend-card__avatar">
+    <atom-avatar [src]="avatar" [name]="name" size="lg"></atom-avatar>
+  </div>
+  <div class="molecule-friend-card__info">
+    <h3 class="molecule-friend-card__name">{{ name }}</h3>
+    <p class="molecule-friend-card__bio">{{ bio }}</p>
+    <span class="molecule-friend-card__mutual">{{ mutual }} amigos en común</span>
+  </div>
+  <div *ngIf="showActions" class="molecule-friend-card__actions">
+    <button class="molecule-friend-card__reject" type="button" (click)="handleReject()"><i class="fas fa-times"></i></button>
+    <button class="molecule-friend-card__accept" type="button" (click)="handleAccept()"><i class="fas fa-check"></i></button>
+  </div>
+</div>

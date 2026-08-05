@@ -1,0 +1,11 @@
+<div class="molecule-conversation-item">
+  <div class="molecule-conversation-item__avatar">
+    <atom-avatar [src]="avatar" [name]="name" size="md"></atom-avatar>
+  </div>
+  <div class="molecule-conversation-item__info">
+    <h4 class="molecule-conversation-item__name">{{ name }}</h4>
+    <p class="molecule-conversation-item__last">{{ lastMessage }}</p>
+  </div>
+  <span class="molecule-conversation-item__time">{{ time }}</span>
+  <atom-badge [count]="unread"></atom-badge>
+</div>

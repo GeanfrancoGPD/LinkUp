@@ -1,0 +1,7 @@
+.molecule-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  &__label { font-size: 0.875rem; font-weight: 500; color: #374151; }
+  &__error { font-size: 0.75rem; color: #ef4444; min-height: 1.25rem; }
+}

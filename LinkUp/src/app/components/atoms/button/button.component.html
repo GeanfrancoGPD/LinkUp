@@ -1,0 +1,8 @@
+<button 
+  [type]="type" 
+  [disabled]="disabled" 
+  [class]="'atom-button atom-button--' + variant + (fullWidth ? ' atom-button--full' : '')"
+>
+  <i *ngIf="icon" class="atom-button__icon" [class]="icon"></i>
+  <span class="atom-button__label">{{ label }}</span>
+</button>

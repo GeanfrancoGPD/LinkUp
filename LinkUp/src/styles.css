@@ -1,1 +1,237 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap');
+
+:root {
+  --bg-outer: #09111f;
+  --bg-inner: #eef4fb;
+  --surface: rgba(255, 255, 255, 0.94);
+  --surface-strong: #ffffff;
+  --surface-soft: #f6f9ff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: rgba(148, 163, 184, 0.24);
+  --primary: #0f63e6;
+  --primary-deep: #0a49ab;
+  --primary-soft: #e8f1ff;
+  --danger: #ef4444;
+  --success: #10b981;
+  --shadow-lg: 0 28px 70px rgba(15, 23, 42, 0.22);
+  --shadow-md: 0 16px 36px rgba(15, 23, 42, 0.14);
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-md: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@keyframes floatOrb {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -14px, 0) scale(1.06); }
+}
+
+@keyframes driftGrid {
+  0% { background-position: 0 0; }
+  100% { background-position: 56px 56px; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.22; }
+  50% { opacity: 0.42; }
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(16px); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+html,
+body {
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(circle at top left, rgba(15, 99, 230, 0.14), transparent 28%),
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.72), transparent 22%),
+    linear-gradient(180deg, #f7faff 0%, #edf3fb 100%);
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+  animation: driftGrid 18s linear infinite;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: auto 0 0 0;
+  height: 32vh;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(15, 99, 230, 0.14), transparent 24%),
+    radial-gradient(circle at 80% 72%, rgba(14, 165, 233, 0.1), transparent 22%),
+    linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.28) 100%);
+  animation: pulseGlow 10s ease-in-out infinite;
+}
+
+app-root {
+  display: block;
+  height: 100dvh;
+  min-height: 100dvh;
+}
+
+.app-shell {
+  width: min(520px, 100%);
+  height: 100%;
+  min-height: 100%;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at top left, rgba(15, 99, 230, 0.12), transparent 24%),
+    radial-gradient(circle at 85% 12%, rgba(56, 189, 248, 0.1), transparent 18%),
+    linear-gradient(180deg, #f7faff 0%, #edf3fb 100%);
+  box-shadow: var(--shadow-lg);
+}
+
+.app-shell::before,
+.app-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.app-shell::before {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(15, 99, 230, 0.18), transparent 0 18%),
+    radial-gradient(circle at 82% 15%, rgba(14, 165, 233, 0.14), transparent 0 16%),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.7), transparent 0 14%);
+  filter: blur(18px);
+  opacity: 0.9;
+  animation: floatOrb 12s ease-in-out infinite;
+}
+
+.app-shell::after {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.24), transparent 30%),
+    linear-gradient(315deg, rgba(15, 99, 230, 0.08), transparent 28%);
+  mix-blend-mode: screen;
+}
+
+@media (min-width: 901px) {
+  .app-shell {
+    border-radius: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-shell {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.page-home__header,
+.page-login__card,
+.page-register__card,
+.page-chat-list__back,
+.page-chat-list__empty,
+.page-swipe__back,
+.page-swipe__back-btn,
+.page-profile__card,
+.page-profile-other__card,
+.page-profile-edit__form,
+.page-chat-room__header,
+.page-chat-room__input,
+.molecule-friend-card,
+.molecule-conversation-item,
+.page-home__feed-empty {
+  animation: riseIn 0.55s ease both;
+}
+
+.page-home__cards > *,
+.page-chat-list__items > *,
+.page-swipe__card-wrapper,
+.page-profile__info,
+.page-profile__actions,
+.page-profile-other__bio,
+.page-profile-edit__actions,
+.page-chat-room__messages > * {
+  animation: riseIn 0.55s ease both;
+}
+
+.page-home__cards > *:nth-child(1),
+.page-chat-list__items > *:nth-child(1) { animation-delay: 0.05s; }
+.page-home__cards > *:nth-child(2),
+.page-chat-list__items > *:nth-child(2) { animation-delay: 0.1s; }
+.page-home__cards > *:nth-child(3),
+.page-chat-list__items > *:nth-child(3) { animation-delay: 0.15s; }
+
+.page-home__nav,
+.page-chat-room__input,
+.page-chat-room__header,
+.page-chat-list__header,
+.page-swipe__header,
+.page-profile__header,
+.page-profile-other__header,
+.page-profile-edit__header {
+  backdrop-filter: blur(18px);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(148, 163, 184, 0.12);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(15, 99, 230, 0.35);
+  border-radius: 999px;
+}

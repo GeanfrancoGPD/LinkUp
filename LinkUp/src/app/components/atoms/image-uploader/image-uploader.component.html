@@ -1,0 +1,8 @@
+<div class="atom-image-uploader">
+  <div class="atom-image-uploader__preview">
+    <img *ngIf="preview" [src]="preview" alt="preview" />
+    <i *ngIf="!preview" class="fas fa-camera"></i>
+  </div>
+  <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+  <span class="atom-image-uploader__hint">Haz clic para subir una foto</span>
+</div>

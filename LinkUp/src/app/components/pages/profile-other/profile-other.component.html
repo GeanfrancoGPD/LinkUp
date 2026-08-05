@@ -1,0 +1,25 @@
+<div class="page-profile-other">
+  <div class="page-profile-other__header">
+    <button class="page-profile-other__back" routerLink="/home"><i class="fas fa-arrow-left"></i></button>
+    <h1>Perfil</h1>
+  </div>
+  <div class="page-profile-other__card">
+    <div class="page-profile-other__avatar">
+      <atom-avatar [src]="user?.avatar" [name]="user?.firstName + ' ' + user?.lastName" size="lg"></atom-avatar>
+    </div>
+    <h2 class="page-profile-other__name">{{ user?.firstName }} {{ user?.lastName }}</h2>
+    <p class="page-profile-other__handle">@{{ user?.username }} • Madrid, ES</p>
+    <div class="page-profile-other__friend-info">
+      <span>Amigos desde 2022</span>
+      <span>Mutuos: 14</span>
+    </div>
+    <div class="page-profile-other__actions">
+      <button class="page-profile-other__message" (click)="sendMessage()"><i class="fas fa-envelope"></i> Enviar mensaje</button>
+      <button class="page-profile-other__remove" (click)="removeFriend()"><i class="fas fa-user-minus"></i> Eliminar amistad</button>
+    </div>
+  </div>
+  <div class="page-profile-other__bio">
+    <label>SOBRE MI</label>
+    <p>{{ user?.bio || 'Diseñadora de interfaces apasionada por la fotografía urbana y el senderismo. Buscando siempre nuevas conexiones creativas en la ciudad.' }}</p>
+  </div>
+</div>

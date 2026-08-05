@@ -1,0 +1,36 @@
+<div class="page-chat-room">
+  <div class="page-chat-room__header">
+    <button class="page-chat-room__back" routerLink="/chats"><i class="fas fa-arrow-left"></i></button>
+    <div class="page-chat-room__info">
+      <h2>{{ conversation?.name }}</h2>
+      <span>En línea</span>
+    </div>
+  </div>
+  <div class="page-chat-room__messages" #messagesContainer>
+    <molecule-chat-message
+      *ngFor="let msg of messages"
+      [text]="msg.text"
+      [image]="msg.image || null"
+      [time]="msg.time"
+      [isOwn]="msg.isOwn"
+      [avatar]="msg.avatar"
+      [name]="msg.name"
+    ></molecule-chat-message>
+  </div>
+  <div class="page-chat-room__input">
+    <div *ngIf="selectedImage" class="page-chat-room__image-preview">
+      <img [src]="selectedImage" alt="Imagen seleccionada" />
+      <button type="button" class="page-chat-room__remove-image" (click)="clearSelectedImage()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="page-chat-room__input-wrapper">
+      <input #imageInput type="file" accept="image/*" class="page-chat-room__file-input" (change)="onImageSelected($event)" />
+      <button type="button" class="page-chat-room__image-btn" (click)="openImagePicker()" aria-label="Adjuntar imagen">
+        <i class="fas fa-image"></i>
+      </button>
+      <input type="text" [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." (keyup.enter)="sendMessage()" class="page-chat-room__input-field" />
+      <button class="page-chat-room__send-btn" [disabled]="!newMessage.trim() && !selectedImage" (click)="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
