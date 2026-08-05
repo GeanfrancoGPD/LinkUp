@@ -50,4 +50,28 @@ router.delete("/solicitudes", authMiddleware, async (req, res) => {
   await LinkBO.cancelarSolicitud(req, res);
 });
 
+// ==========================================
+// CHATS
+// ==========================================
+
+router.post("/chats/create", authMiddleware, async (req, res) => {
+  await LinkBO.createChat(req, res);
+});
+
+router.get("/chats", authMiddleware, async (req, res) => {
+  await LinkBO.getChatsPorUsuario(req, res);
+});
+
+router.delete("/chats/:id_chat", authMiddleware, async (req, res) => {
+  await LinkBO.eliminarChat(req, res);
+});
+
+// ==========================================
+// MENSAJES (historial)
+// ==========================================
+
+router.get("/chats/:id_chat/mensajes", authMiddleware, async (req, res) => {
+  await LinkBO.obtenerHistorialMensajes(req, res);
+});
+
 export default router;
