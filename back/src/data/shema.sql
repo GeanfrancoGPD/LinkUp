@@ -163,3 +163,19 @@ CREATE TABLE imagenes_mensajes (
         REFERENCES mensajes(id_mensaje)
         ON DELETE CASCADE
 );
+
+-- ===========================
+-- SESIONES (express-session + connect-pg-simple)
+-- Estructura requerida por connect-pg-simple
+-- ===========================
+
+CREATE TABLE "session" (
+    "sid" varchar NOT NULL COLLATE "default",
+    "sess" json NOT NULL,
+    "expire" timestamp(6) NOT NULL
+)
+WITH (OIDS=FALSE);
+
+ALTER TABLE "session" DROP CONSTRAINT IF EXISTS "session_pkey";
+ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+CREATE INDEX "IDX_session_expire" ON "session" ("expire");

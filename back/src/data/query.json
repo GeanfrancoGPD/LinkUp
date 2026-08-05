@@ -137,6 +137,14 @@
     "orderArray": ["tipo_chat"]
   },
 
+  "eliminarChat": {
+    "query": "DELETE FROM chats WHERE id_chat = $1",
+    "structure_params": {
+      "id_chat": "number"
+    },
+    "orderArray": ["id_chat"]
+  },
+
   "agregarParticipante": {
     "query": "INSERT INTO participantes_chat (id_chat, id_usuario) VALUES ($1, $2) RETURNING id_participante",
     "structure_params": {
@@ -157,6 +165,15 @@
     "orderArray": ["id_chat", "id_usuario", "contenido", "tipo"]
   },
 
+  "editarChat": {
+    "query": "UPDATE chats SET tipo_chat = $1::enum_tipo_chat WHERE id_chat = $2",
+    "structure_params": {
+      "tipo_chat": "string",
+      "id_chat": "number"
+    },
+    "orderArray": ["tipo_chat", "id_chat"]
+  },
+
   "guardarImagen": {
     "query": "INSERT INTO imagenes_mensajes (id_mensaje, ruta_imagen, nombre_archivo, tamano_kb) VALUES ($1, $2, $3, $4) RETURNING id_imagen",
     "structure_params": {
@@ -175,6 +192,34 @@
     },
     "orderArray": ["id_chat"]
   },
+
+  "obtenerMensajesChatPaginados": {
+    "query": "SELECT m.id_mensaje, m.id_chat, m.id_usuario, CONCAT(u.nombres, ' ', u.apellidos) AS usuario, m.contenido, m.tipo, i.ruta_imagen, m.fecha_envio FROM mensajes m INNER JOIN usuarios u ON u.id_usuario = m.id_usuario LEFT JOIN imagenes_mensajes i ON i.id_mensaje = m.id_mensaje WHERE m.id_chat = $1 AND ($2::int IS NULL OR m.id_mensaje < $2) ORDER BY m.id_mensaje DESC LIMIT $3",
+    "structure_params": {
+      "id_chat": "number",
+      "before_id": "number",
+      "limit": "number"
+    },
+    "orderArray": ["id_chat", "before_id", "limit"]
+  },
+
+  "esParticipanteChat": {
+    "query": "SELECT EXISTS(SELECT 1 FROM participantes_chat WHERE id_chat = $1 AND id_usuario = $2) AS existe",
+    "structure_params": {
+      "id_chat": "number",
+      "id_usuario": "number"
+    },
+    "orderArray": ["id_chat", "id_usuario"]
+  },
+
+  "obtenerChatsUsuario": {
+    "query": "SELECT c.id_chat, c.tipo_chat, c.fecha_creacion, (SELECT m.contenido FROM mensajes m WHERE m.id_chat = c.id_chat ORDER BY m.fecha_envio DESC LIMIT 1) AS ultimo_mensaje, (SELECT m.fecha_envio FROM mensajes m WHERE m.id_chat = c.id_chat ORDER BY m.fecha_envio DESC LIMIT 1) AS fecha_ultimo_mensaje FROM chats c INNER JOIN participantes_chat pc ON pc.id_chat = c.id_chat WHERE pc.id_usuario = $1 ORDER BY fecha_ultimo_mensaje DESC NULLS LAST",
+    "structure_params": {
+      "id_usuario": "number"
+    },
+    "orderArray": ["id_usuario"]
+  },
+
   "obtenerChatPrivado": {
     "query": "SELECT p1.id_chat FROM participantes_chat p1 INNER JOIN participantes_chat p2 ON p1.id_chat = p2.id_chat INNER JOIN chats c ON c.id_chat = p1.id_chat WHERE p1.id_usuario = $1 AND p2.id_usuario = $2 AND c.tipo_chat = 'Privado'",
     "structure_params": {
@@ -182,5 +227,31 @@
       "id_usuario_2": "number"
     },
     "orderArray": ["id_usuario_1", "id_usuario_2"]
+  },
+
+  "obtenerChatPrivadoEntreUsuarios": {
+    "query": "SELECT c.id_chat FROM chats c INNER JOIN participantes_chat p1 ON c.id_chat = p1.id_chat INNER JOIN participantes_chat p2 ON c.id_chat = p2.id_chat WHERE c.tipo_chat = 'Privado'::enum_tipo_chat AND p1.id_usuario = $1 AND p2.id_usuario = $2",
+    "structure_params": {
+      "id_usuario_1": "number",
+      "id_usuario_2": "number"
+    },
+    "orderArray": ["id_usuario_1", "id_usuario_2"]
+  },
+
+  "getChatsUsuario": {
+    "query": "SELECT c.id_chat, c.tipo_chat, c.fecha_creacion, u.id_usuario AS id_interlocutor, CONCAT(u.nombres, ' ', u.apellidos) AS nombre_interlocutor, u.foto_perfil AS foto_interlocutor FROM participantes_chat pc INNER JOIN chats c ON c.id_chat = pc.id_chat LEFT JOIN participantes_chat pc2 ON pc2.id_chat = c.id_chat AND pc2.id_usuario <> $1 LEFT JOIN usuarios u ON u.id_usuario = pc2.id_usuario WHERE pc.id_usuario = $1 ORDER BY c.id_chat DESC",
+    "structure_params": {
+      "id_usuario": "number"
+    },
+    "orderArray": ["id_usuario"]
+  },
+
+  "obtenerChatUsuario": {
+    "query": "SELECT c.id_chat, c.tipo_chat, c.fecha_creacion FROM participantes_chat pc INNER JOIN chats c ON c.id_chat = pc.id_chat WHERE pc.id_usuario = $1 AND c.id_chat = $2",
+    "structure_params": {
+      "id_usuario": "number",
+      "id_chat": "number"
+    },
+    "orderArray": ["id_usuario", "id_chat"]
   }
 }
