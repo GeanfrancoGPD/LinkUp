@@ -45,7 +45,8 @@ export class RegisterComponent {
       this.error = 'Debes aceptar los términos';
       return;
     }
-    const success = this.auth.register({
+
+    this.auth.register({
       firstName: this.firstName,
       lastName: this.lastName,
       username: this.username,
@@ -53,11 +54,17 @@ export class RegisterComponent {
       birthdate: this.birthdate,
       password: this.password,
       avatar: this.avatar || `https://ui-avatars.com/api/?name=${this.firstName}+${this.lastName}&background=6366f1&color=fff`
+    }).subscribe({
+      next: (success) => {
+        if (success) {
+          this.router.navigate(['/login']);
+        } else {
+          this.error = 'El usuario ya existe o el registro falló';
+        }
+      },
+      error: (message) => {
+        this.error = typeof message === 'string' ? message : 'No se pudo registrar el usuario';
+      }
     });
-    if (success) {
-      this.router.navigate(['/login']);
-    } else {
-      this.error = 'El usuario ya existe';
-    }
   }
 }

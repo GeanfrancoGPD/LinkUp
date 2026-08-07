@@ -4,32 +4,6 @@ import { ChatService } from './chat.service';
 @Injectable({ providedIn: 'root' })
 export class FriendService {
   private suggestions: any[] = [];
-  private readonly demoSuggestions = [
-    {
-      id: 'demo-friend-1',
-      firstName: 'Elena',
-      lastName: 'Rodríguez',
-      avatar: 'https://picsum.photos/seed/demo-friend-1/400/400',
-      bio: 'Designer & Coffee enthusiast. Let\'s talk about minimalist interfaces and local...',
-      mutual: 12
-    },
-    {
-      id: 'demo-friend-2',
-      firstName: 'Mateo',
-      lastName: 'Valenzuela',
-      avatar: 'https://picsum.photos/seed/demo-friend-2/400/400',
-      bio: 'Creador de productos digitales y fan de las experiencias simples.',
-      mutual: 8
-    },
-    {
-      id: 'demo-friend-3',
-      firstName: 'Sarah',
-      lastName: 'Jenkins',
-      avatar: 'https://picsum.photos/seed/demo-friend-3/400/400',
-      bio: 'Explorando nuevas conexiones creativas en la ciudad.',
-      mutual: 5
-    }
-  ];
 
   constructor(private chat: ChatService) {
     this.initSuggestions();
@@ -54,7 +28,7 @@ export class FriendService {
         };
       });
 
-    this.suggestions = mappedUsers.length > 0 ? mappedUsers : [...this.demoSuggestions];
+    this.suggestions = mappedUsers;
   }
 
   getSuggestions(userId: string): any[] {

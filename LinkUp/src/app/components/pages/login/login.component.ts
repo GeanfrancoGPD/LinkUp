@@ -26,10 +26,20 @@ export class LoginComponent {
       this.error = 'Todos los campos son obligatorios';
       return;
     }
-    if (this.auth.login(this.email, this.password)) {
-      this.router.navigate(['/home']);
-    } else {
-      this.error = 'Credenciales inválidas';
-    }
+
+    this.error = '';
+
+    this.auth.login(this.email, this.password).subscribe({
+      next: (ok) => {
+        if (ok) {
+          this.router.navigate(['/home']);
+        } else {
+          this.error = 'Credenciales inválidas';
+        }
+      },
+      error: (message) => {
+        this.error = typeof message === 'string' ? message : 'Credenciales inválidas';
+      }
+    });
   }
 }

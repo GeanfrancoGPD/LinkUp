@@ -44,36 +44,48 @@ class LinkAuth {
 
   async login(req: Request, res: Response): Promise<Response> {
     try {
-      const { gmail, email, password } = req.body;
-      const normalizedEmail = (gmail ?? email ?? "").trim();
+      const { gmail, email, password, username, nombre_usuario } = req.body;
+      const normalizedCredential = (
+        gmail ?? email ?? username ?? nombre_usuario ?? ""
+      ).trim();
 
-      if (!normalizedEmail || !password) {
+      if (!normalizedCredential || !password) {
         return res.status(400).json({
           success: false,
-          message: "Correo electrónico y contraseña son requeridos",
+          message: "Credencial y contraseña son requeridos",
         });
       }
 
-      const emailValidation =
-        await this.validator.validateEmail(normalizedEmail);
-      if (!emailValidation.success) {
+      // El login solo necesita que la contraseña llegue presente.
+      // La validación fuerte de contraseña pertenece al registro.
+      if (typeof password !== "string" || password.trim() === "") {
         return res.status(400).json({
           success: false,
-          message: "Correo electrónico inválido",
+          message: "Contraseña requerida",
         });
       }
 
-      const passwordValidation =
-        await this.validator.validatePassword(password);
-      if (!passwordValidation.success) {
-        return res.status(400).json({
-          success: false,
-          message: "Contraseña inválida",
-        });
-      }
+      // 1. Obtener usuario de la base de datos.
+      // Si el identificador es un correo válido, buscar por correo.
+      // Si no lo es, asumir nombre de usuario.
+      let userBD: Usuario | undefined;
 
-      // 1. Obtener usuario de la base de datos
-      const userBD = await this.repository.getUsuarioPorCorreo(normalizedEmail);
+      if (normalizedCredential.includes("@")) {
+        const emailValidation =
+          await this.validator.validateEmail(normalizedCredential);
+        if (!emailValidation.success) {
+          return res.status(400).json({
+            success: false,
+            message: "Correo electrónico inválido",
+          });
+        }
+
+        userBD = await this.repository.getUsuarioPorCorreo(normalizedCredential);
+      } else {
+        userBD = await this.repository.getUsuarioPorNombreUsuario(
+          normalizedCredential,
+        );
+      }
 
       if (!userBD) {
         return res.status(401).json({
@@ -174,9 +186,12 @@ class LinkAuth {
       }
 
       // Verificar existencia de usuario por correo o nombre de usuario
-      const existingUser =
+      const existingUserByUsername =
         await this.repository.getUsuarioPorNombreUsuario(normalizedUsername);
-      if (existingUser) {
+      const existingUserByEmail =
+        await this.repository.getUsuarioPorCorreo(normalizedEmail);
+
+      if (existingUserByUsername || existingUserByEmail) {
         return res.status(409).json({
           success: false,
           message: "El nombre de usuario o correo ya está registrado",

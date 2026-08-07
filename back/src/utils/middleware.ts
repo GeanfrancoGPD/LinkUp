@@ -30,8 +30,8 @@ app.use(
     proxy: true,
     cookie: {
       httpOnly: true,
-      secure: true, // OBLIGATORIO para móviles en producción (requiere HTTPS)
-      sameSite: "none",
+      secure: false,
+      sameSite: "lax",
       maxAge: 1000 * 60 * 60,
     },
   }),

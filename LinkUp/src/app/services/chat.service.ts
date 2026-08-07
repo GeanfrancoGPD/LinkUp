@@ -3,35 +3,6 @@ import { Injectable } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private conversations: any[] = [];
-  private readonly demoConversations = [
-    {
-      id: 'conv-demo-1',
-      name: 'Sarah Jenkins',
-      avatar: 'https://picsum.photos/seed/demo-chat-1/400/400',
-      lastMessage: 'Looking forward to our meeting tomorrow.',
-      time: '12:45 PM',
-      unread: 2,
-      userId: 'demo-friend-3'
-    },
-    {
-      id: 'conv-demo-2',
-      name: 'Marcus Chen',
-      avatar: 'https://picsum.photos/seed/demo-chat-2/400/400',
-      lastMessage: 'Did you see the new design specs?',
-      time: '10:12 AM',
-      unread: 0,
-      userId: 'demo-friend-4'
-    },
-    {
-      id: 'conv-demo-3',
-      name: 'Elena Rodríguez',
-      avatar: 'https://picsum.photos/seed/demo-chat-3/400/400',
-      lastMessage: 'Thanks for the update. See you soon!',
-      time: 'Yesterday',
-      unread: 1,
-      userId: 'demo-friend-1'
-    }
-  ];
 
   constructor() {
     this.initConversations();
@@ -55,7 +26,7 @@ export class ChatService {
       };
     });
 
-    this.conversations = mappedUsers.length > 0 ? mappedUsers : [...this.demoConversations];
+    this.conversations = mappedUsers;
   }
 
   getConversations(userId: string): any[] {
