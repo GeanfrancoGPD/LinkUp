@@ -93,7 +93,8 @@ class LinkAuth {
                 nombre: userBD.nombres,
                 tipo: userBD.estado, // o el campo que estés mapeando como 'tipo' (ej. rol/estado)
             };
-            console.log("Usuario autenticado:", sessionUser.email);
+            console.log("[Auth] Usuario autenticado:", sessionUser.email, "ID:", sessionUser.id);
+            console.log("[Auth] Sesión antes de responder:", req.session?.user);
             // 4. Delegar la creación de sesión a Session.ts (que también envía la respuesta)
             await this.session.createSession({ request: req, response: res }, [
                 sessionUser,

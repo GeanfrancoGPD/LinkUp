@@ -109,13 +109,63 @@ class LinkBO {
         });
       }
 
+      const solicitud = await this.repository.getSolicitudPorId(id_solicitud);
+      if (!solicitud) {
+        return res.status(404).json({
+          success: false,
+          message: "La solicitud no existe",
+        });
+      }
+
+      const idUsuarioEnvia = Number(solicitud.id_usuario_envia);
+      const idUsuarioRecibe = Number(solicitud.id_usuario_recibe);
+
+      console.log("[LinkBO] Aceptando solicitud:", {
+        id_solicitud,
+        idUsuarioEnvia,
+        idUsuarioRecibe,
+      });
+
       await this.repository.aceptarSolicitud(id_solicitud);
+
+      const chatExistente = await this.repository.obtenerChatPrivadoEntreUsuarios(
+        idUsuarioEnvia,
+        idUsuarioRecibe,
+      );
+
+      if (!chatExistente) {
+        console.log("[LinkBO] No existe chat privado; creando uno nuevo...");
+        const chat = await this.repository.createChat({ tipo_chat: "Privado" });
+
+        console.log("[LinkBO] Chat creado con id:", chat.id_chat);
+
+        await this.repository.agregarParticipante({
+          id_chat: chat.id_chat,
+          id_usuario: idUsuarioEnvia,
+        });
+
+        await this.repository.agregarParticipante({
+          id_chat: chat.id_chat,
+          id_usuario: idUsuarioRecibe,
+        });
+
+        console.log("[LinkBO] Participantes añadidos al chat:", {
+          id_chat: chat.id_chat,
+          id_usuario_envia: idUsuarioEnvia,
+          id_usuario_recibe: idUsuarioRecibe,
+        });
+      } else {
+        console.log("[LinkBO] Ya existe un chat privado entre ambos usuarios:", {
+          id_chat: chatExistente.id_chat,
+        });
+      }
 
       return res.json({
         success: true,
         message: "Solicitud aceptada correctamente",
       });
     } catch (error: any) {
+      console.error("[LinkBO] Error al aceptar solicitud:", error);
       if (error?.message === "NO_AUTHENTICATED") {
         return res.status(401).json({
           success: false,

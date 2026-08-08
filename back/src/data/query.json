@@ -120,6 +120,14 @@
     "orderArray": ["id_usuario"]
   },
 
+  "getSolicitudPorId": {
+    "query": "SELECT id_solicitud, id_usuario_envia, id_usuario_recibe, estado FROM solicitudes_amistad WHERE id_solicitud = $1",
+    "structure_params": {
+      "id_solicitud": "number"
+    },
+    "orderArray": ["id_solicitud"]
+  },
+
   "rechazarSolicitud": {
     "query": "UPDATE solicitudes_amistad SET estado='Rechazada'::enum_estado_solicitud WHERE id_solicitud=$1",
     "structure_params": {
@@ -238,7 +246,7 @@
   },
 
   "obtenerChatPrivadoEntreUsuarios": {
-    "query": "SELECT c.id_chat FROM chats c INNER JOIN participantes_chat p1 ON c.id_chat = p1.id_chat INNER JOIN participantes_chat p2 ON c.id_chat = p2.id_chat WHERE c.tipo_chat = 'Privado'::enum_tipo_chat AND p1.id_usuario = $1 AND p2.id_usuario = $2",
+    "query": "SELECT c.id_chat FROM chats c INNER JOIN participantes_chat p1 ON c.id_chat = p1.id_chat INNER JOIN participantes_chat p2 ON c.id_chat = p2.id_chat WHERE c.tipo_chat = 'Privado'::enum_tipo_chat AND ((p1.id_usuario = $1 AND p2.id_usuario = $2) OR (p1.id_usuario = $2 AND p2.id_usuario = $1)) GROUP BY c.id_chat LIMIT 1",
     "structure_params": {
       "id_usuario_1": "number",
       "id_usuario_2": "number"
@@ -247,7 +255,7 @@
   },
 
   "getChatsUsuario": {
-    "query": "SELECT c.id_chat, c.tipo_chat, c.fecha_creacion, u.id_usuario AS id_interlocutor, CONCAT(u.nombres, ' ', u.apellidos) AS nombre_interlocutor, u.foto_perfil AS foto_interlocutor FROM participantes_chat pc INNER JOIN chats c ON c.id_chat = pc.id_chat LEFT JOIN participantes_chat pc2 ON pc2.id_chat = c.id_chat AND pc2.id_usuario <> $1 LEFT JOIN usuarios u ON u.id_usuario = pc2.id_usuario WHERE pc.id_usuario = $1 ORDER BY c.id_chat DESC",
+    "query": "SELECT c.id_chat, c.tipo_chat, c.fecha_creacion, u.id_usuario AS id_interlocutor, u.nombre_usuario AS nombre_usuario_interlocutor, CONCAT(u.nombres, ' ', u.apellidos) AS nombre_interlocutor, u.foto_perfil AS foto_interlocutor FROM participantes_chat pc INNER JOIN chats c ON c.id_chat = pc.id_chat LEFT JOIN participantes_chat pc2 ON pc2.id_chat = c.id_chat AND pc2.id_usuario <> $1 LEFT JOIN usuarios u ON u.id_usuario = pc2.id_usuario WHERE pc.id_usuario = $1 ORDER BY c.id_chat DESC",
     "structure_params": {
       "id_usuario": "number"
     },

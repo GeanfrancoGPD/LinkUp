@@ -65,21 +65,6 @@ export class ChatRoomComponent implements OnInit {
     this.newMessage = '';
     this.clearSelectedImage();
     this.scrollToBottom();
-
-    // Respuesta simulada (para demostrar)
-    setTimeout(() => {
-      const reply = {
-        id: Date.now().toString(),
-        text: '¡Gracias por tu mensaje! 😊',
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        isOwn: false,
-        avatar: this.conversation.avatar,
-        name: this.conversation.name
-      };
-      this.chat.sendMessage(this.conversationId, reply);
-      this.messages = this.chat.getMessages(this.conversationId);
-      this.scrollToBottom();
-    }, 1500);
   }
 
   openImagePicker(): void {

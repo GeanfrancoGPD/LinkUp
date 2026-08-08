@@ -88,10 +88,6 @@ class UserRepository {
         const result = await this.db.excecuteNameQuery("crearSolicitud", datos);
         return result?.[0] || result;
     }
-    async getSolicitudPorId(id_solicitud) {
-        const result = await this.db.excecuteNameQuery("getSolicitudPorId", { id_solicitud });
-        return result?.[0];
-    }
     /**
      * Cambia el estado de una solicitud a 'Aceptada'.
      */
@@ -121,6 +117,10 @@ class UserRepository {
     async getSolicitudesPendientes(id_usuario_recibe) {
         const result = await this.db.excecuteNameQuery("getSolicitudesPendientes", { id_usuario: id_usuario_recibe });
         return result || [];
+    }
+    async getSolicitudPorId(id_solicitud) {
+        const result = await this.db.excecuteNameQuery("getSolicitudPorId", { id_solicitud });
+        return result?.[0];
     }
     async createChat(datos) {
         const result = await this.db.excecuteNameQuery("crearChat", {

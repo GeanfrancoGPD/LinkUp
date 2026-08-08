@@ -100,25 +100,40 @@ class LinkBO {
             if (!solicitud) {
                 return res.status(404).json({
                     success: false,
-                    message: "La solicitud de amistad no existe",
+                    message: "La solicitud no existe",
                 });
             }
+            const idUsuarioEnvia = Number(solicitud.id_usuario_envia);
+            const idUsuarioRecibe = Number(solicitud.id_usuario_recibe);
+            console.log("[LinkBO] Aceptando solicitud:", {
+                id_solicitud,
+                idUsuarioEnvia,
+                idUsuarioRecibe,
+            });
             await this.repository.aceptarSolicitud(id_solicitud);
-            const id_usuario_envia = solicitud.id_usuario_envia;
-            const id_usuario_recibe = solicitud.id_usuario_recibe;
-            const existingChat = await this.repository.obtenerChatPrivadoEntreUsuarios(id_usuario_envia, id_usuario_recibe);
-            if (!existingChat) {
+            const chatExistente = await this.repository.obtenerChatPrivadoEntreUsuarios(idUsuarioEnvia, idUsuarioRecibe);
+            if (!chatExistente) {
+                console.log("[LinkBO] No existe chat privado; creando uno nuevo...");
                 const chat = await this.repository.createChat({ tipo_chat: "Privado" });
-                await Promise.all([
-                    this.repository.agregarParticipante({
-                        id_chat: chat.id_chat,
-                        id_usuario: id_usuario_envia,
-                    }),
-                    this.repository.agregarParticipante({
-                        id_chat: chat.id_chat,
-                        id_usuario: id_usuario_recibe,
-                    }),
-                ]);
+                console.log("[LinkBO] Chat creado con id:", chat.id_chat);
+                await this.repository.agregarParticipante({
+                    id_chat: chat.id_chat,
+                    id_usuario: idUsuarioEnvia,
+                });
+                await this.repository.agregarParticipante({
+                    id_chat: chat.id_chat,
+                    id_usuario: idUsuarioRecibe,
+                });
+                console.log("[LinkBO] Participantes añadidos al chat:", {
+                    id_chat: chat.id_chat,
+                    id_usuario_envia: idUsuarioEnvia,
+                    id_usuario_recibe: idUsuarioRecibe,
+                });
+            }
+            else {
+                console.log("[LinkBO] Ya existe un chat privado entre ambos usuarios:", {
+                    id_chat: chatExistente.id_chat,
+                });
             }
             return res.json({
                 success: true,
@@ -126,6 +141,7 @@ class LinkBO {
             });
         }
         catch (error) {
+            console.error("[LinkBO] Error al aceptar solicitud:", error);
             if (error?.message === "NO_AUTHENTICATED") {
                 return res.status(401).json({
                     success: false,
@@ -203,7 +219,9 @@ class LinkBO {
     async listarSolicitudesPendientes(req, res) {
         try {
             const id_usuario_recibe = this.resolveSessionUserId(req);
+            console.log("[LinkBO] listarSolicitudesPendientes para usuario:", id_usuario_recibe);
             const solicitudes = await this.repository.getSolicitudesPendientes(id_usuario_recibe);
+            console.log("[LinkBO] solicitudes encontradas:", solicitudes);
             return res.json({
                 success: true,
                 data: solicitudes,

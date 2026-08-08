@@ -31,6 +31,9 @@ export class HomeComponent implements OnInit {
   }
 
   navigateTo(route: string): void {
+    if (route === '/chats') {
+      console.log('Botón de chats pulsado desde la barra inferior');
+    }
     this.router.navigate([route]);
   }
 

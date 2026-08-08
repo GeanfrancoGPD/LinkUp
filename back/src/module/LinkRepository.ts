@@ -182,6 +182,26 @@ class UserRepository {
     return (result as SolicitudConUsuario[]) || [];
   }
 
+  async getSolicitudPorId(
+    id_solicitud: number,
+  ): Promise<
+    | {
+        id_solicitud: number;
+        id_usuario_envia: number;
+        id_usuario_recibe: number;
+        estado: string;
+      }
+    | undefined
+  > {
+    const result = await this.db.excecuteNameQuery<{
+      id_solicitud: number;
+      id_usuario_envia: number;
+      id_usuario_recibe: number;
+      estado: string;
+    }>("getSolicitudPorId", { id_solicitud });
+    return result?.[0];
+  }
+
   async createChat(datos: CrearChatDTO): Promise<{ id_chat: number }> {
     const result = await this.db.excecuteNameQuery("crearChat", {
       tipo_chat: datos.tipo_chat || "Privado", // Default to 'Privado' if not provided
@@ -283,7 +303,7 @@ class UserRepository {
    */
   async getChatsPorUsuario(id_usuario: number): Promise<ChatConDetalles[]> {
     const result = await this.db.excecuteNameQuery<ChatConDetalles>(
-      "obtenerChatsUsuario",
+      "getChatsUsuario",
       { id_usuario },
     );
     return result || [];
