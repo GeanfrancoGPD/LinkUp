@@ -34,6 +34,8 @@ export class AuthService {
   }
 
   register(user: Partial<User>): Observable<boolean> {
+    const avatarValue = user.avatar && user.avatar.startsWith('data:') ? '' : user.avatar || '';
+
     const payload = {
       nombres: user.firstName || '',
       apellidos: user.lastName || '',
@@ -44,7 +46,7 @@ export class AuthService {
       fecha_nacimiento: user.birthdate || '',
       sexo: 'Otro',
       biografia: '',
-      foto_perfil: user.avatar || ''
+      foto_perfil: avatarValue
     };
 
     return this.http.post<RegisterApiResponse>(`${environment.apiUrl}/register`, payload, { withCredentials: true }).pipe(

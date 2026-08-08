@@ -54,7 +54,7 @@ app.use(
     store: new PgStore({
       pool: sessionPool,
       tableName: "session",
-      createTableIfMissing: false,
+      createTableIfMissing: true,
     }),
     secret: process.env.SESSION_SECRET || "mi-clave-secreta",
     resave: false,
