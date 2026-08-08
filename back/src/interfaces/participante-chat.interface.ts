@@ -4,3 +4,8 @@ export interface ParticipanteChat {
   id_usuario: number;
   fecha_union: Date;
 }
+
+export type AgregarParticipanteDTO = Pick<
+  ParticipanteChat,
+  "id_chat" | "id_usuario"
+>;

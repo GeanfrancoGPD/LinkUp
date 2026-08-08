@@ -5,3 +5,5 @@ export interface ImagenMensaje {
   nombre_archivo?: string;
   tamano_kb?: number;
 }
+
+export type GuardarImagenMensajeDTO = Omit<ImagenMensaje, "id_imagen">;

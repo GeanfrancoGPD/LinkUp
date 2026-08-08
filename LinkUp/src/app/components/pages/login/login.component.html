@@ -1,0 +1,22 @@
+<div class="page-login">
+  <div class="page-login__card">
+    <h1 class="page-login__title">Iniciar Sesión</h1>
+    <form (ngSubmit)="onSubmit()" class="page-login__form">
+      <div class="page-login__field">
+        <atom-input [(ngModel)]="email" name="email" type="email" placeholder="nombre@ejemplo.com" label="Email"></atom-input>
+      </div>
+      <div class="page-login__field">
+        <atom-input [(ngModel)]="password" name="password" type="password" placeholder="********" label="Contraseña"></atom-input>
+      </div>
+      <div class="page-login__remember">
+        <input type="checkbox" id="remember" [(ngModel)]="remember" name="remember" />
+        <label for="remember">Recordar sesión</label>
+      </div>
+      <atom-button type="submit" label="Iniciar Sesión" variant="primary" fullWidth></atom-button>
+    </form>
+    <p class="page-login__register">
+      ¿No tienes una cuenta? <a routerLink="/register">Regístrate gratis</a>
+    </p>
+    <div *ngIf="error" class="page-login__error">{{ error }}</div>
+  </div>
+</div>

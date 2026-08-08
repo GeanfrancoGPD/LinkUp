@@ -1,0 +1,18 @@
+<div class="page-chat-list">
+  <div class="page-chat-list__header">
+    <button class="page-chat-list__back" routerLink="/home"><i class="fas fa-arrow-left"></i></button>
+    <h1>Chats</h1>
+  </div>
+  <div class="page-chat-list__items">
+    <div *ngIf="conversations.length === 0" class="page-chat-list__empty"><p>No tienes conversaciones aún</p></div>
+    <molecule-conversation-item
+      *ngFor="let conv of conversations"
+      [name]="conv.name"
+      [lastMessage]="conv.lastMessage"
+      [time]="conv.time"
+      [unread]="conv.unread || 0"
+      [avatar]="conv.avatar"
+      (click)="openChat(conv.id)"
+    ></molecule-conversation-item>
+  </div>
+</div>

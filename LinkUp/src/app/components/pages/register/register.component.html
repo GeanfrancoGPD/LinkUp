@@ -1,0 +1,29 @@
+<div class="page-register">
+  <div class="page-register__card">
+    <h1 class="page-register__title">Crear nueva cuenta</h1>
+    <p class="page-register__sub">¿Cuántas creencias has? Crear una cuenta gratuita hoy mismo.</p>
+    <form (ngSubmit)="onSubmit()" class="page-register__form">
+      <div class="page-register__avatar-field">
+        <atom-image-uploader (imageSelected)="onAvatarSelected($event)"></atom-image-uploader>
+      </div>
+      <div class="page-register__row">
+        <div class="page-register__field"><atom-input [(ngModel)]="firstName" name="firstName" placeholder="Juan" label="Nombre"></atom-input></div>
+        <div class="page-register__field"><atom-input [(ngModel)]="lastName" name="lastName" placeholder="Perez" label="Apellido"></atom-input></div>
+      </div>
+      <div class="page-register__field"><atom-input [(ngModel)]="username" name="username" placeholder="juanpere23" label="Nombre de usuario"></atom-input></div>
+      <div class="page-register__field"><atom-input [(ngModel)]="email" name="email" type="email" placeholder="ejemplo@correo.com" label="Correo electrónico"></atom-input></div>
+      <div class="page-register__field"><atom-input [(ngModel)]="birthdate" name="birthdate" type="date" label="Fecha de nacimiento"></atom-input></div>
+      <div class="page-register__field"><atom-input [(ngModel)]="password" name="password" type="password" placeholder="********" label="Contraseña"></atom-input></div>
+      <div class="page-register__field"><atom-input [(ngModel)]="confirmPassword" name="confirmPassword" type="password" placeholder="********" label="Confirmar"></atom-input></div>
+      <div class="page-register__terms">
+        <input type="checkbox" id="terms" [(ngModel)]="terms" name="terms" />
+        <label for="terms">Acepto los términos de Servicio y la Política de Privacidad.</label>
+      </div>
+      <atom-button type="submit" label="Crear cuenta" variant="primary" fullWidth]="true"></atom-button>
+    </form>
+    <p class="page-register__login">
+      ¿Ya tienes una cuenta? <a routerLink="/login">Inicia sesión</a>
+    </p>
+    <div *ngIf="error" class="page-register__error">{{ error }}</div>
+  </div>
+</div>

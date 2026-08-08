@@ -1,0 +1,15 @@
+.atom-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #ff7b7b 0%, #ef4444 100%);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  line-height: 1;
+  box-shadow: 0 8px 16px rgba(239, 68, 68, 0.25);
+}

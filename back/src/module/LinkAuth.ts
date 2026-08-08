@@ -44,36 +44,48 @@ class LinkAuth {
 
   async login(req: Request, res: Response): Promise<Response> {
     try {
-      const { gmail, email, password } = req.body;
-      const normalizedEmail = (gmail ?? email ?? "").trim();
+      const { gmail, email, password, username, nombre_usuario } = req.body;
+      const normalizedCredential = (
+        gmail ?? email ?? username ?? nombre_usuario ?? ""
+      ).trim();
 
-      if (!normalizedEmail || !password) {
+      if (!normalizedCredential || !password) {
         return res.status(400).json({
           success: false,
-          message: "Correo electrónico y contraseña son requeridos",
+          message: "Credencial y contraseña son requeridos",
         });
       }
 
-      const emailValidation =
-        await this.validator.validateEmail(normalizedEmail);
-      if (!emailValidation.success) {
+      // El login solo necesita que la contraseña llegue presente.
+      // La validación fuerte de contraseña pertenece al registro.
+      if (typeof password !== "string" || password.trim() === "") {
         return res.status(400).json({
           success: false,
-          message: "Correo electrónico inválido",
+          message: "Contraseña requerida",
         });
       }
 
-      const passwordValidation =
-        await this.validator.validatePassword(password);
-      if (!passwordValidation.success) {
-        return res.status(400).json({
-          success: false,
-          message: "Contraseña inválida",
-        });
-      }
+      // 1. Obtener usuario de la base de datos.
+      // Si el identificador es un correo válido, buscar por correo.
+      // Si no lo es, asumir nombre de usuario.
+      let userBD: Usuario | undefined;
 
-      // 1. Obtener usuario de la base de datos
-      const userBD = await this.repository.getUsuarioPorCorreo(normalizedEmail);
+      if (normalizedCredential.includes("@")) {
+        const emailValidation =
+          await this.validator.validateEmail(normalizedCredential);
+        if (!emailValidation.success) {
+          return res.status(400).json({
+            success: false,
+            message: "Correo electrónico inválido",
+          });
+        }
+
+        userBD = await this.repository.getUsuarioPorCorreo(normalizedCredential);
+      } else {
+        userBD = await this.repository.getUsuarioPorNombreUsuario(
+          normalizedCredential,
+        );
+      }
 
       if (!userBD) {
         return res.status(401).json({
@@ -100,7 +112,8 @@ class LinkAuth {
         tipo: userBD.estado, // o el campo que estés mapeando como 'tipo' (ej. rol/estado)
       };
 
-      console.log("Usuario autenticado:", sessionUser.email);
+      console.log("[Auth] Usuario autenticado:", sessionUser.email, "ID:", sessionUser.id);
+      console.log("[Auth] Sesión antes de responder:", req.session?.user);
 
       // 4. Delegar la creación de sesión a Session.ts (que también envía la respuesta)
       await this.session.createSession({ request: req, response: res }, [
@@ -174,9 +187,12 @@ class LinkAuth {
       }
 
       // Verificar existencia de usuario por correo o nombre de usuario
-      const existingUser =
+      const existingUserByUsername =
         await this.repository.getUsuarioPorNombreUsuario(normalizedUsername);
-      if (existingUser) {
+      const existingUserByEmail =
+        await this.repository.getUsuarioPorCorreo(normalizedEmail);
+
+      if (existingUserByUsername || existingUserByEmail) {
         return res.status(409).json({
           success: false,
           message: "El nombre de usuario o correo ya está registrado",
@@ -260,16 +276,29 @@ class LinkAuth {
           .json({ success: false, message: "ID de usuario inválido" });
       }
 
-      const { nombres, apellidos, telefono, biografia, foto_perfil, estado } =
-        req.body;
+
+      const {
+        nombres,
+        apellidos,
+        nombre_usuario,
+        correo,
+        telefono,
+        biografia,
+        foto_perfil,
+        estado,
+        newPassword,
+      } = req.body;
 
       if (
         !nombres &&
         !apellidos &&
+        !nombre_usuario &&
+        !correo &&
         !telefono &&
         !biografia &&
         !foto_perfil &&
-        !estado
+        !estado &&
+        !newPassword
       ) {
         return res.status(400).json({
           success: false,
@@ -277,10 +306,23 @@ class LinkAuth {
         });
       }
 
+      // Si viene nueva contraseña, validarla y actualizarla
+      if (newPassword) {
+        const passValidation = await this.validator.validatePassword(newPassword);
+        if (!passValidation.success) {
+          return res.status(400).json({ success: false, message: "Contraseña no válida" });
+        }
+
+        const hashed = await this.bcrypt.hash(newPassword);
+        await this.repository.actualizarContrasena(usuarioId, hashed);
+      }
+
       // Mapeamos solo los campos enviados usando el DTO
       const updateData: ActualizarUsuarioDTO = {
         nombres: nombres ?? undefined,
         apellidos: apellidos ?? undefined,
+        nombre_usuario: nombre_usuario ?? undefined,
+        correo: correo ?? undefined,
         telefono: telefono ?? undefined,
         biografia: biografia ?? undefined,
         foto_perfil: foto_perfil ?? undefined,

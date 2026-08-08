@@ -1,0 +1,10 @@
+<div class="molecule-chat-message" [class.molecule-chat-message--own]="isOwn">
+  <div class="molecule-chat-message__avatar">
+    <atom-avatar [src]="avatar" [name]="name" size="sm"></atom-avatar>
+  </div>
+  <div class="molecule-chat-message__bubble" [class.molecule-chat-message__bubble--own]="isOwn">
+    <div *ngIf="text" class="molecule-chat-message__text">{{ text }}</div>
+    <div *ngIf="image" class="molecule-chat-message__image"><img [src]="image" alt="image" /></div>
+    <span class="molecule-chat-message__time">{{ time }}</span>
+  </div>
+</div>

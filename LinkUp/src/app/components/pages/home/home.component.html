@@ -1,0 +1,46 @@
+<div class="page-home">
+  <header class="page-home__header">
+    <div>
+      <h1 class="page-home__logo">LinkUp</h1>
+      <p class="page-home__header-text">Conecta con nuevas personas y descubre coincidencias seleccionadas especialmente para ti.</p>
+    </div>
+    <div class="page-home__user">
+      <atom-avatar [src]="currentUser?.avatar" [name]="currentUser?.firstName + ' ' + currentUser?.lastName" size="sm"></atom-avatar>
+    </div>
+  </header>
+
+  <div class="page-home__content">
+    <section class="page-home__suggestions">
+      <div class="page-home__section-header">
+        <div>
+          <h2>Sugerencias</h2>
+          <p class="page-home__subtitle">Revisa la primera opción y decide si quieres conectar.</p>
+        </div>
+        <a routerLink="/solicitudes">Ver todas</a>
+      </div>
+
+      <div *ngIf="current" class="page-home__cards">
+        <molecule-friend-card
+          [large]="true"
+          [name]="current.firstName + ' ' + current.lastName"
+          [bio]="current.bio || 'Explorando nuevas conexiones'"
+          [mutual]="current.mutual || 0"
+          [avatar]="current.avatar"
+          (accept)="accept()"
+          (reject)="reject()"
+        ></molecule-friend-card>
+      </div>
+
+      <div *ngIf="!current" class="page-home__empty">
+        <p>No hay más sugerencias</p>
+      </div>
+    </section>
+  </div>
+
+  <nav class="page-home__nav">
+    <div class="page-home__nav-item" (click)="navigateTo('/home')"><i class="fas fa-home"></i><span>Inicio</span></div>
+    <div class="page-home__nav-item" (click)="navigateTo('/solicitudes')"><i class="fas fa-user-plus"></i><span>Solicitudes</span></div>
+    <div class="page-home__nav-item" (click)="navigateTo('/chats')"><i class="fas fa-comment-dots"></i><span>Chats</span></div>
+    <div class="page-home__nav-item" (click)="navigateTo('/profile')"><i class="fas fa-user"></i><span>Perfil</span></div>
+  </nav>
+</div>

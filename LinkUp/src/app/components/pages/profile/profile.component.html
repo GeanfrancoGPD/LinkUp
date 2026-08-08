@@ -1,0 +1,36 @@
+<div class="page-profile">
+  <div class="page-profile__header">
+    <button class="page-profile__back" routerLink="/home"><i class="fas fa-arrow-left"></i></button>
+    <h1>Perfil</h1>
+  </div>
+  <div class="page-profile__card">
+    <div class="page-profile__avatar">
+      <atom-avatar [src]="user?.avatar" [name]="user?.firstName + ' ' + user?.lastName" size="lg"></atom-avatar>
+    </div>
+    <h2 class="page-profile__name">{{ user?.firstName }} {{ user?.lastName }}</h2>
+    <p class="page-profile__username">@{{ user?.username }}</p>
+    <div class="page-profile__info">
+      <div class="page-profile__info-item">
+        <span class="page-profile__info-label">Nombre Completo</span>
+        <span class="page-profile__info-value">{{ user?.firstName }} {{ user?.lastName }}</span>
+      </div>
+      <div class="page-profile__info-item">
+        <span class="page-profile__info-label">Nombre de Usuario</span>
+        <span class="page-profile__info-value">@{{ user?.username }}</span>
+      </div>
+      <div class="page-profile__info-item">
+        <span class="page-profile__info-label">Correo Electrónico</span>
+        <span class="page-profile__info-value">{{ user?.email }}</span>
+      </div>
+      <div class="page-profile__info-item">
+        <span class="page-profile__info-label">Fecha de Registro</span>
+        <span class="page-profile__info-value">{{ user?.joined || '14 de Marzo, 2023' }}</span>
+      </div>
+    </div>
+    <div class="page-profile__actions">
+      <button class="page-profile__edit" routerLink="/profile/edit"><i class="fas fa-pen"></i> Editar perfil</button>
+      <button class="page-profile__logout" (click)="logout()"><i class="fas fa-right-from-bracket"></i> Cerrar sesión</button>
+      <button class="page-profile__delete" (click)="deleteAccount()"><i class="fas fa-trash"></i> Eliminar cuenta</button>
+    </div>
+  </div>
+</div>
