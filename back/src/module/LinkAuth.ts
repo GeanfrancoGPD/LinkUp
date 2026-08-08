@@ -275,8 +275,8 @@ class LinkAuth {
           .json({ success: false, message: "ID de usuario inválido" });
       }
 
-      const { nombres, apellidos, telefono, biografia, foto_perfil, estado } =
-        req.body;
+
+      const { nombres, apellidos, telefono, biografia, foto_perfil, estado, newPassword } = req.body;
 
       if (
         !nombres &&
@@ -284,12 +284,24 @@ class LinkAuth {
         !telefono &&
         !biografia &&
         !foto_perfil &&
-        !estado
+        !estado &&
+        !newPassword
       ) {
         return res.status(400).json({
           success: false,
           message: "Debe proporcionar al menos un campo para actualizar",
         });
+      }
+
+      // Si viene nueva contraseña, validarla y actualizarla
+      if (newPassword) {
+        const passValidation = await this.validator.validatePassword(newPassword);
+        if (!passValidation.success) {
+          return res.status(400).json({ success: false, message: "Contraseña no válida" });
+        }
+
+        const hashed = await this.bcrypt.hash(newPassword);
+        await this.repository.actualizarContrasena(usuarioId, hashed);
       }
 
       // Mapeamos solo los campos enviados usando el DTO

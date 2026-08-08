@@ -61,6 +61,21 @@ class UserRepository {
   async eliminarUsuario(id_usuario: number): Promise<void> {
     await this.db.excecuteNameQuery("eliminarUsuario", { id_usuario });
   }
+
+  async getSugerenciasUsuarios(id_usuario: number): Promise<Usuario[]> {
+    const result = await this.db.excecuteNameQuery("getSugerenciasUsuarios", { id_usuario });
+    return result || [];
+  }
+
+  async actualizarContrasena(id_usuario: number, contrasena: string) {
+    const result = await this.db.excecuteNameQuery("actualizarContrasena", { contrasena, id_usuario });
+    return result;
+  }
+
+  async actualizarFotoPerfil(id_usuario: number, foto_perfil: string) {
+    const result = await this.db.excecuteNameQuery("actualizarFotoPerfil", { foto_perfil, id_usuario });
+    return result;
+  }
 }
 
 export default new UserRepository();

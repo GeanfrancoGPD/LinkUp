@@ -19,6 +19,12 @@
     <div class="page-profile-edit__field">
       <atom-input [(ngModel)]="bio" name="bio" label="Sobre mí" placeholder="Cuéntanos sobre ti"></atom-input>
     </div>
+    <div class="page-profile-edit__field">
+      <atom-input [(ngModel)]="newPassword" name="newPassword" type="password" label="Nueva contraseña" placeholder="Dejar vacío para no cambiar"></atom-input>
+    </div>
+    <div class="page-profile-edit__field">
+      <atom-input [(ngModel)]="confirmPassword" name="confirmPassword" type="password" label="Confirmar contraseña" placeholder="Repite la nueva contraseña"></atom-input>
+    </div>
     <div class="page-profile-edit__actions">
       <atom-button type="submit" label="Guardar cambios" variant="primary" fullWidth></atom-button>
       <button type="button" class="page-profile-edit__delete" (click)="deleteAccount()"><i class="fas fa-trash"></i> Eliminar cuenta</button>

@@ -14,7 +14,7 @@ router.post("/register", async (req, res) => {
 });
 
 router.put("/profile", authMiddleware, async (req, res) => {
-  await LinkAuth.logout(req, res);
+  await LinkAuth.updateUser(req, res);
 });
 
 router.query?.("/hola", async (req, res) => {
