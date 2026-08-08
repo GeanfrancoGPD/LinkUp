@@ -269,8 +269,7 @@
       "id_chat": "number"
     },
     "orderArray": ["id_usuario", "id_chat"]
-  }
-  ,
+  },
   "actualizarContrasena": {
     "query": "UPDATE usuarios SET contrasena = $1 WHERE id_usuario = $2",
     "structure_params": {
@@ -280,6 +279,15 @@
     "orderArray": ["contrasena", "id_usuario"]
   },
   "actualizarFotoPerfil": {
+    "query": "UPDATE usuarios SET foto_perfil = $1 WHERE id_usuario = $2",
+    "structure_params": {
+      "foto_perfil": "string",
+      "id_usuario": "number"
+    },
+    "orderArray": ["foto_perfil", "id_usuario"]
+  },
+
+  "actualizarImagenPerfil": {
     "query": "UPDATE usuarios SET foto_perfil = $1 WHERE id_usuario = $2",
     "structure_params": {
       "foto_perfil": "string",

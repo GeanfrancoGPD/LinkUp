@@ -35,10 +35,6 @@ router.get("/solicitudes/pendientes", authMiddleware, async (req, res) => {
   await LinkBO.listarSolicitudesPendientes(req, res);
 });
 
-router.get("/sugerencias", authMiddleware, async (req, res) => {
-  await LinkBO.listarSugerencias(req, res);
-});
-
 // Aceptar solicitud
 router.put("/solicitudes/aceptar", authMiddleware, async (req, res) => {
   await LinkBO.aceptarSolicitud(req, res);
@@ -52,6 +48,10 @@ router.put("/solicitudes/rechazar", authMiddleware, async (req, res) => {
 // Cancelar solicitud (solo el emisor puede hacerlo)
 router.delete("/solicitudes", authMiddleware, async (req, res) => {
   await LinkBO.cancelarSolicitud(req, res);
+});
+
+router.get("/sugerencias", authMiddleware, async (req, res) => {
+  await LinkBO.listarSugerencias(req, res);
 });
 
 // ==========================================
@@ -90,4 +90,15 @@ router.get("/chats/:id_chat/mensajes", authMiddleware, async (req, res) => {
   await LinkBO.obtenerHistorialMensajes(req, res);
 });
 
+// ==========================================
+// Imagenes
+// ==========================================
+
+router.post("/uploads/mensajes", authMiddleware, async (req, res) => {
+  await LinkBO.subirImagenMensaje(req, res);
+});
+
+router.post("/uploads/perfil", authMiddleware, async (req, res) => {
+  await LinkBO.subirImagenPerfil(req, res);
+});
 export default router;
