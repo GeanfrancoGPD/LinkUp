@@ -14,19 +14,29 @@ export class ChatService {
     const chatId = chat?.id_chat ?? chat?.id ?? 0;
     const interlocutorId = chat?.id_interlocutor ?? chat?.userId ?? chat?.id_usuario ?? chatId;
 
-    const rawName =
-      chat?.nombre_usuario_interlocutor ??
-      chat?.nombre_usuario ??
-      chat?.username ??
-      chat?.usuario?.nombre_usuario ??
-      chat?.usuario?.username ??
-      chat?.interlocutor?.nombre_usuario ??
-      chat?.interlocutor?.username ??
-      chat?.nombre_interlocutor ??
-      chat?.name ??
-      'Usuario';
+    const nameCandidates = [
+      chat?.nombre_interlocutor,
+      chat?.nombre_usuario_interlocutor,
+      chat?.interlocutor?.nombre_usuario,
+      chat?.interlocutor?.username,
+      chat?.usuario?.nombre_usuario,
+      chat?.usuario?.username,
+      chat?.nombre_usuario,
+      chat?.username,
+      chat?.name,
+    ];
 
-    const name = String(rawName || 'Usuario').trim() || 'Usuario';
+    const name =
+      String(
+        nameCandidates.find(
+          (value) => typeof value === 'string' && value.trim().length > 0 && !value.includes('@'),
+        ) ??
+          nameCandidates.find(
+            (value) => typeof value === 'string' && value.trim().length > 0,
+          ) ??
+          'Usuario',
+      ).trim() || 'Usuario';
+
     const avatar =
       chat?.foto_interlocutor ||
       `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff`;

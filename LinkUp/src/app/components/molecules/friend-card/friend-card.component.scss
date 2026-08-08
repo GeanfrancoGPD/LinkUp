@@ -2,16 +2,16 @@
   position: relative;
   overflow: hidden;
   background: var(--card-surface-strong);
-  border-radius: 30px;
-  padding: 2rem 1.4rem 1.4rem;
-  box-shadow: var(--shadow-card);
+  border-radius: 34px; /* Antes: 30px */
+  padding: 2.4rem 2.2rem 1.8rem; /* Antes: 2rem 1.4rem 1.4rem */
+  box-shadow: 0 32px 84px rgba(15, 23, 42, 0.16); /* Sombra más grande */
   border: 1px solid var(--card-border);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  max-width: 520px;
-  width: min(100%, 520px);
+  max-width: 760px; /* Antes: 520px */
+  width: min(100%, 760px); /* Antes: min(100%, 520px) */
   margin: 0 auto;
   text-align: center;
   backdrop-filter: blur(16px);

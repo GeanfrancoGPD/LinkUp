@@ -16,8 +16,9 @@ app.use(
   cors({
     origin: [
       "http://localhost:4200",
-      "https://localhost", // Agregado para Capacitor Android
-      "capacitor://localhost", // Agregado para Capacitor IOS
+      "http://127.0.0.1:4200",
+      "https://localhost",
+      "capacitor://localhost",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -63,8 +64,8 @@ app.use(
     rolling: true,
     cookie: {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: "none",
+      secure: false,
+      sameSite: "lax",
       maxAge: TWO_HOURS_MS,
     },
   }),
