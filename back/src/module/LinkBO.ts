@@ -128,10 +128,11 @@ class LinkBO {
 
       await this.repository.aceptarSolicitud(id_solicitud);
 
-      const chatExistente = await this.repository.obtenerChatPrivadoEntreUsuarios(
-        idUsuarioEnvia,
-        idUsuarioRecibe,
-      );
+      const chatExistente =
+        await this.repository.obtenerChatPrivadoEntreUsuarios(
+          idUsuarioEnvia,
+          idUsuarioRecibe,
+        );
 
       if (!chatExistente) {
         console.log("[LinkBO] No existe chat privado; creando uno nuevo...");
@@ -155,9 +156,12 @@ class LinkBO {
           id_usuario_recibe: idUsuarioRecibe,
         });
       } else {
-        console.log("[LinkBO] Ya existe un chat privado entre ambos usuarios:", {
-          id_chat: chatExistente.id_chat,
-        });
+        console.log(
+          "[LinkBO] Ya existe un chat privado entre ambos usuarios:",
+          {
+            id_chat: chatExistente.id_chat,
+          },
+        );
       }
 
       return res.json({
@@ -257,7 +261,10 @@ class LinkBO {
   ): Promise<Response> {
     try {
       const id_usuario_recibe = this.resolveSessionUserId(req);
-      console.log("[LinkBO] listarSolicitudesPendientes para usuario:", id_usuario_recibe);
+      console.log(
+        "[LinkBO] listarSolicitudesPendientes para usuario:",
+        id_usuario_recibe,
+      );
 
       const solicitudes =
         await this.repository.getSolicitudesPendientes(id_usuario_recibe);
@@ -285,7 +292,8 @@ class LinkBO {
   async listarSugerencias(req: Request, res: Response): Promise<Response> {
     try {
       const id_usuario = this.resolveSessionUserId(req);
-      const suggestions = await this.repository.getSuggestedUsuarios(id_usuario);
+      const suggestions =
+        await this.repository.getSuggestedUsuarios(id_usuario);
 
       return res.json({
         success: true,
@@ -584,6 +592,90 @@ class LinkBO {
     id_usuario: number,
   ): Promise<boolean> {
     return await this.repository.esParticipanteChat(id_chat, id_usuario);
+  }
+
+  async subirImagenMensaje(req: Request, res: Response): Promise<Response> {
+    try {
+      this.resolveSessionUserId(req);
+
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: "No se proporcionó ninguna imagen",
+        });
+      }
+
+      const rutaImagen = `/uploads/images/${req.file.filename}`;
+
+      const tamanoKb = Math.ceil(req.file.size / 1024);
+
+      return res.status(201).json({
+        success: true,
+        message: "Imagen subida correctamente",
+        data: {
+          ruta_imagen: rutaImagen,
+          nombre_archivo: req.file.originalname,
+          tamano_kb: tamanoKb,
+        },
+      });
+    } catch (error: any) {
+      console.error("Error al subir imagen:", error);
+
+      if (error?.message === "NO_AUTHENTICATED") {
+        return res.status(401).json({
+          success: false,
+          message: "No estás autenticado",
+        });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: "Error interno al subir la imagen",
+      });
+    }
+  }
+
+  async subirImagenPerfil(req: Request, res: Response): Promise<Response> {
+    try {
+      const id_usuario = this.resolveSessionUserId(req);
+
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: "No se proporcionó ninguna imagen",
+        });
+      }
+
+      const rutaImagen = `/uploads/images/${req.file.filename}`;
+
+      const tamanoKb = Math.ceil(req.file.size / 1024);
+
+      await this.repository.actualizarImagenPerfil(id_usuario, rutaImagen);
+
+      return res.status(201).json({
+        success: true,
+        message: "Imagen de perfil subida correctamente",
+        data: {
+          ruta_imagen: rutaImagen,
+          nombre_archivo: req.file.originalname,
+          tamano_kb: tamanoKb,
+        },
+      });
+    } catch (error: any) {
+      console.error("Error al subir imagen de perfil:", error);
+
+      if (error?.message === "NO_AUTHENTICATED") {
+        return res.status(401).json({
+          success: false,
+          message: "No estás autenticado",
+        });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: "Error interno al subir la imagen de perfil",
+      });
+    }
   }
 }
 

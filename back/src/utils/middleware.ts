@@ -4,6 +4,7 @@ import pg from "pg";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
 
 dotenv.config();
 
@@ -24,6 +25,8 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+app.use("/uploads", express.static(path.resolve("src/uploads")));
 
 // JSON
 app.use(express.json());

@@ -94,7 +94,9 @@ class UserRepository {
       estado: "estado",
     };
 
-    for (const key of Object.keys(columns) as Array<keyof ActualizarUsuarioDTO>) {
+    for (const key of Object.keys(columns) as Array<
+      keyof ActualizarUsuarioDTO
+    >) {
       const value = datos[key];
       if (value !== undefined) {
         fields.push(`${columns[key]}=$${values.length + 1}`);
@@ -182,9 +184,7 @@ class UserRepository {
     return (result as SolicitudConUsuario[]) || [];
   }
 
-  async getSolicitudPorId(
-    id_solicitud: number,
-  ): Promise<
+  async getSolicitudPorId(id_solicitud: number): Promise<
     | {
         id_solicitud: number;
         id_usuario_envia: number;
@@ -336,6 +336,16 @@ class UserRepository {
     );
     // Devolvemos ordenados ASC para que el frontend los muestre en orden cronológico
     return (result || []).reverse();
+  }
+
+  async actualizarImagenPerfil(
+    id_usuario: number,
+    ruta_imagen: string,
+  ): Promise<void> {
+    await this.db.excecuteNameQuery("actualizarImagenPerfil", {
+      ruta_imagen,
+      id_usuario,
+    });
   }
 }
 
