@@ -22,7 +22,7 @@
   &__logo { font-family: 'Poppins', sans-serif; font-size: 1.24rem; font-weight: 800; color: var(--primary); margin: 0; letter-spacing: -0.02em; }
   &__header-text { margin: 0.35rem 0 0; color: rgba(74, 84, 114, 0.86); font-size: 0.95rem; max-width: 360px; line-height: 1.5; }
   &__content { padding: 1.2rem 1rem 2rem; display: flex; justify-content: center; align-items: center; flex: 1; }
-  &__suggestions { width: min(100%, 820px); margin: 0 auto; background: rgba(255, 255, 255, 0.82); border-radius: 1.75rem; padding: 1.25rem; box-shadow: 0 26px 60px rgba(47, 65, 97, 0.08); }
+  &__suggestions { width: min(100%, 820px); margin: 0 auto; background: var(--card-surface); border-radius: 1.75rem; padding: 1.25rem; box-shadow: var(--shadow-card); border: 1px solid var(--card-border); }
   &__section-header {
     display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem;
     h2 { font-size: 1.05rem; font-weight: 800; margin: 0; }

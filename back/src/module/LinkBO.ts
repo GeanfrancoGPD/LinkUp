@@ -207,9 +207,11 @@ class LinkBO {
   ): Promise<Response> {
     try {
       const id_usuario_recibe = this.resolveSessionUserId(req);
+      console.log("[LinkBO] listarSolicitudesPendientes para usuario:", id_usuario_recibe);
 
       const solicitudes =
         await this.repository.getSolicitudesPendientes(id_usuario_recibe);
+      console.log("[LinkBO] solicitudes encontradas:", solicitudes);
 
       return res.json({
         success: true,
@@ -226,6 +228,30 @@ class LinkBO {
       return res.status(500).json({
         success: false,
         message: "Error interno al obtener las solicitudes",
+      });
+    }
+  }
+
+  async listarSugerencias(req: Request, res: Response): Promise<Response> {
+    try {
+      const id_usuario = this.resolveSessionUserId(req);
+      const suggestions = await this.repository.getSuggestedUsuarios(id_usuario);
+
+      return res.json({
+        success: true,
+        data: suggestions,
+        total: suggestions.length,
+      });
+    } catch (error: any) {
+      if (error?.message === "NO_AUTHENTICATED") {
+        return res.status(401).json({
+          success: false,
+          message: "No estás autenticado",
+        });
+      }
+      return res.status(500).json({
+        success: false,
+        message: "Error interno al obtener las sugerencias",
       });
     }
   }

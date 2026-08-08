@@ -71,11 +71,11 @@
   &__card {
     position: relative;
     z-index: 1;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(246, 249, 255, 0.92) 100%);
+    background: var(--card-surface-strong);
     border-radius: 30px;
     padding: 1.35rem;
-    box-shadow: 0 22px 52px rgba(15, 23, 42, 0.12);
-    border: 1px solid rgba(148, 163, 184, 0.16);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--card-border);
     backdrop-filter: blur(18px);
     overflow: hidden;
 

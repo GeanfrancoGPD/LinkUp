@@ -62,6 +62,13 @@ class UserRepository {
     return result?.[0];
   }
 
+  async getSuggestedUsuarios(id_usuario: number): Promise<Usuario[]> {
+    const result = await this.db.excecuteNameQuery("getSuggestedUsuarios", {
+      id_usuario,
+    });
+    return result || [];
+  }
+
   async crearUsuario(datos: CrearUsuarioDTO): Promise<{ id_usuario: number }> {
     const result = await this.db.excecuteNameQuery("crearUsuario", datos);
     return result?.[0] || result;
@@ -71,10 +78,47 @@ class UserRepository {
     id_usuario: number,
     datos: ActualizarUsuarioDTO,
   ): Promise<void> {
-    await this.db.excecuteNameQuery("actualizarUsuario", {
-      ...datos,
-      id_usuario,
-    });
+    const fields: string[] = [];
+    const values: any[] = [];
+
+    const columns: Record<keyof ActualizarUsuarioDTO, string> = {
+      nombres: "nombres",
+      apellidos: "apellidos",
+      nombre_usuario: "nombre_usuario",
+      correo: "correo",
+      telefono: "telefono",
+      fecha_nacimiento: "fecha_nacimiento",
+      sexo: "sexo",
+      biografia: "biografia",
+      foto_perfil: "foto_perfil",
+      estado: "estado",
+    };
+
+    for (const key of Object.keys(columns) as Array<keyof ActualizarUsuarioDTO>) {
+      const value = datos[key];
+      if (value !== undefined) {
+        fields.push(`${columns[key]}=$${values.length + 1}`);
+        values.push(value);
+      }
+    }
+
+    if (fields.length === 0) {
+      return;
+    }
+
+    values.push(id_usuario);
+    const query = `UPDATE usuarios SET ${fields.join(", ")} WHERE id_usuario=$${values.length}`;
+    await this.db.executeQuery(query, values);
+  }
+
+  async actualizarContrasena(
+    id_usuario: number,
+    contrasena: string,
+  ): Promise<void> {
+    await this.db.executeQuery(
+      "UPDATE usuarios SET contrasena = $1 WHERE id_usuario = $2",
+      [contrasena, id_usuario],
+    );
   }
 
   async eliminarUsuario(id_usuario: number): Promise<void> {

@@ -112,7 +112,8 @@ class LinkAuth {
         tipo: userBD.estado, // o el campo que estés mapeando como 'tipo' (ej. rol/estado)
       };
 
-      console.log("Usuario autenticado:", sessionUser.email);
+      console.log("[Auth] Usuario autenticado:", sessionUser.email, "ID:", sessionUser.id);
+      console.log("[Auth] Sesión antes de responder:", req.session?.user);
 
       // 4. Delegar la creación de sesión a Session.ts (que también envía la respuesta)
       await this.session.createSession({ request: req, response: res }, [
@@ -276,11 +277,23 @@ class LinkAuth {
       }
 
 
-      const { nombres, apellidos, telefono, biografia, foto_perfil, estado, newPassword } = req.body;
+      const {
+        nombres,
+        apellidos,
+        nombre_usuario,
+        correo,
+        telefono,
+        biografia,
+        foto_perfil,
+        estado,
+        newPassword,
+      } = req.body;
 
       if (
         !nombres &&
         !apellidos &&
+        !nombre_usuario &&
+        !correo &&
         !telefono &&
         !biografia &&
         !foto_perfil &&
@@ -308,6 +321,8 @@ class LinkAuth {
       const updateData: ActualizarUsuarioDTO = {
         nombres: nombres ?? undefined,
         apellidos: apellidos ?? undefined,
+        nombre_usuario: nombre_usuario ?? undefined,
+        correo: correo ?? undefined,
         telefono: telefono ?? undefined,
         biografia: biografia ?? undefined,
         foto_perfil: foto_perfil ?? undefined,

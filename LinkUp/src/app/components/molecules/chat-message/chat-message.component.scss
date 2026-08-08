@@ -3,22 +3,28 @@
   gap: 0.6rem;
   margin-bottom: 0.9rem;
   align-items: flex-start;
+
   &--own { flex-direction: row-reverse; }
+
   &__bubble {
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--card-surface);
     padding: 0.84rem 1rem;
-    border-radius: 18px 18px 18px 6px;
+    border-radius: 18px 18px 18px 8px;
     max-width: 78%;
     word-wrap: break-word;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-    border: 1px solid rgba(148, 163, 184, 0.16);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(10px);
+
     &--own {
-      background: linear-gradient(180deg, var(--primary) 0%, var(--primary-deep) 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%);
       color: #fff;
       border-color: transparent;
-      border-radius: 18px 18px 6px 18px;
+      border-radius: 18px 18px 8px 18px;
+      box-shadow: 0 16px 30px rgba(15, 99, 230, 0.18);
     }
   }
+
   &__text { font-size: 0.9rem; line-height: 1.45; }
   &__image { margin-top: 0.6rem; img { max-width: 220px; border-radius: 14px; } }
   &__time { font-size: 0.68rem; opacity: 0.72; display: block; margin-top: 0.35rem; }

@@ -23,7 +23,6 @@ export class ProfileEditComponent implements OnInit {
   bio: string = '';
   avatar: string = '';
   newPassword: string = '';
-  confirmPassword: string = '';
 
   constructor(private auth: AuthService, private userService: UserService, private router: Router) {}
 
@@ -45,16 +44,29 @@ export class ProfileEditComponent implements OnInit {
   onSubmit(): void {
     if (!this.user) return;
     const parts = this.name.split(' ');
-    const firstName = parts[0] || '';
-    const lastName = parts.slice(1).join(' ') || '';
-    if (this.newPassword && this.newPassword !== this.confirmPassword) {
-      alert('Las contraseñas no coinciden');
-      return;
-    }
+    const nombres = parts[0] || '';
+    const apellidos = parts.slice(1).join(' ') || '';
 
-    const updated = { ...this.user, firstName, lastName, username: this.username, email: this.email, bio: this.bio, avatar: this.avatar };
-    this.userService.updateUser(updated, this.newPassword || undefined);
-    this.auth.updateCurrentUser(updated);
+    const updatePayload = {
+      nombres,
+      apellidos,
+      nombre_usuario: this.username,
+      correo: this.email,
+      biografia: this.bio,
+      foto_perfil: this.avatar || undefined,
+      newPassword: this.newPassword || undefined,
+    };
+
+    this.userService.updateUser(this.user.id, updatePayload);
+    this.auth.updateCurrentUser({
+      ...this.user,
+      firstName: nombres,
+      lastName: apellidos,
+      username: this.username,
+      email: this.email,
+      bio: this.bio,
+      avatar: this.avatar,
+    });
     this.router.navigate(['/profile']);
   }
 

@@ -35,6 +35,10 @@ router.get("/solicitudes/pendientes", authMiddleware, async (req, res) => {
   await LinkBO.listarSolicitudesPendientes(req, res);
 });
 
+router.get("/sugerencias", authMiddleware, async (req, res) => {
+  await LinkBO.listarSugerencias(req, res);
+});
+
 // Aceptar solicitud
 router.put("/solicitudes/aceptar", authMiddleware, async (req, res) => {
   await LinkBO.aceptarSolicitud(req, res);
@@ -64,6 +68,18 @@ router.get("/chats", authMiddleware, async (req, res) => {
 
 router.delete("/chats/:id_chat", authMiddleware, async (req, res) => {
   await LinkBO.eliminarChat(req, res);
+});
+
+// ==========================================
+// PERFIL DE USUARIO
+// ==========================================
+
+router.put("/profile", authMiddleware, async (req, res) => {
+  await LinkAuth.updateUser(req, res);
+});
+
+router.delete("/profile", authMiddleware, async (req, res) => {
+  await LinkAuth.deleteUser(req, res);
 });
 
 // ==========================================

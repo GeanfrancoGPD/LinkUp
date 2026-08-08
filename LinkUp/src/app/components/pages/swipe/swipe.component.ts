@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { FriendCardComponent } from '../../molecules/friend-card/friend-card.component';
-import { AuthService } from '../../../services/auth.service';
 import { FriendService } from '../../../services/friend.service';
 
 @Component({
@@ -13,28 +12,35 @@ import { FriendService } from '../../../services/friend.service';
   styleUrls: ['./swipe.component.scss']
 })
 export class SwipeComponent implements OnInit {
-  suggestions: any[] = [];
-  empty: boolean = false;
+  requests: any[] = [];
+  empty = false;
 
-  constructor(private auth: AuthService, private friend: FriendService, private router: Router) {}
+  constructor(private friend: FriendService) {}
 
   ngOnInit(): void {
-    this.refreshSuggestions();
+    console.log('[Solicitudes] componente inicializado');
+    this.refreshRequests();
   }
 
-  accept(id: string): void {
-    this.friend.acceptSuggestion(id);
-    this.refreshSuggestions();
+  accept(idSolicitud: number): void {
+    this.friend.acceptRequest(idSolicitud).subscribe(() => {
+      this.refreshRequests();
+    });
   }
 
-  reject(id: string): void {
-    this.friend.rejectSuggestion(id);
-    this.refreshSuggestions();
+  reject(idSolicitud: number): void {
+    this.friend.rejectRequest(idSolicitud).subscribe(() => {
+      this.refreshRequests();
+    });
   }
 
-  private refreshSuggestions(): void {
-    const userId = this.auth.getCurrentUser()?.id || 'guest';
-    this.suggestions = this.friend.getSuggestions(userId);
-    this.empty = this.suggestions.length === 0;
+  private refreshRequests(): void {
+    console.log('[Solicitudes] solicitando solicitudes pendientes');
+    this.friend.refreshPendingRequests().subscribe((requests) => {
+      console.log('[Solicitudes] respuesta recibida', requests);
+      this.requests = requests;
+      this.empty = this.requests.length === 0;
+      console.log('[Solicitudes] estado final', { count: this.requests.length, empty: this.empty });
+    });
   }
 }

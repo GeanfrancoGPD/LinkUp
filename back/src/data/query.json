@@ -5,6 +5,14 @@
     "orderArray": []
   },
 
+  "getSuggestedUsuarios": {
+    "query": "SELECT u.id_usuario, u.nombres, u.apellidos, u.nombre_usuario, u.correo, u.telefono, u.fecha_nacimiento, u.sexo, u.biografia, u.foto_perfil FROM usuarios u WHERE u.id_usuario != $1 AND u.id_usuario NOT IN (SELECT CASE WHEN s.id_usuario_envia = $1 THEN s.id_usuario_recibe ELSE s.id_usuario_envia END FROM solicitudes_amistad s WHERE (s.id_usuario_envia = $1 OR s.id_usuario_recibe = $1) AND s.estado IN ('Pendiente'::enum_estado_solicitud, 'Aceptada'::enum_estado_solicitud)) ORDER BY u.id_usuario",
+    "structure_params": {
+      "id_usuario": "number"
+    },
+    "orderArray": ["id_usuario"]
+  },
+
   "getUsuarioPorId": {
     "query": "SELECT * FROM usuarios WHERE id_usuario = $1",
     "structure_params": {

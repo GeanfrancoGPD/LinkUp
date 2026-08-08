@@ -43,13 +43,16 @@
     flex-direction: column;
     gap: 0.75rem;
     width: 100%;
+    align-items: stretch;
   }
 
   &__card-wrapper {
     width: 100%;
     max-width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
-  &__empty { text-align: center; color: var(--muted); p { font-size: 1rem; margin-bottom: 1rem; } }
+  &__empty { text-align: center; color: var(--muted); padding: 1.25rem; background: var(--card-surface); border-radius: 24px; border: 1px solid var(--card-border); box-shadow: var(--shadow-card); p { font-size: 1rem; margin-bottom: 1rem; } }
   &__back-btn { padding: 0.8rem 1.8rem; background: linear-gradient(180deg, var(--primary) 0%, var(--primary-deep) 100%); color: #fff; border: none; border-radius: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 14px 28px rgba(15, 99, 230, 0.18); &:hover { transform: translateY(-1px); } }
 }

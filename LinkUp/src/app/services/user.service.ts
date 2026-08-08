@@ -15,17 +15,14 @@ export class UserService {
     return this.getUsers().find(u => u.id === id) || null;
   }
 
-  updateUser(updated: User, newPassword?: string): void {
+  updateUser(id: string, payload: Record<string, any>): void {
     // Call backend to update profile. The backend expects withCredentials cookie.
-    const payload: any = { ...updated };
-    if (newPassword) payload.newPassword = newPassword;
-
     this.http.put(`${environment.apiUrl}/profile`, payload, { withCredentials: true }).subscribe({
       next: () => {
         const users = this.getUsers();
-        const idx = users.findIndex(u => u.id === updated.id);
+        const idx = users.findIndex(u => u.id === id);
         if (idx !== -1) {
-          users[idx] = updated;
+          users[idx] = { ...users[idx], ...payload };
           localStorage.setItem('users', JSON.stringify(users));
         }
       },
@@ -34,7 +31,12 @@ export class UserService {
   }
 
   deleteUser(id: string): void {
-    const users = this.getUsers().filter(u => u.id !== id);
-    localStorage.setItem('users', JSON.stringify(users));
+    this.http.delete(`${environment.apiUrl}/profile`, { withCredentials: true }).subscribe({
+      next: () => {
+        const users = this.getUsers().filter(u => u.id !== id);
+        localStorage.setItem('users', JSON.stringify(users));
+      },
+      error: (err) => console.error('Error deleting user', err)
+    });
   }
 }

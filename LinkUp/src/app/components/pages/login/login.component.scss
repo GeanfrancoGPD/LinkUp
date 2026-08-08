@@ -15,12 +15,12 @@
   &__card {
     width: 100%;
     max-width: 360px;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--card-surface-strong);
     backdrop-filter: blur(18px);
     padding: 2rem 1.35rem 1.4rem;
     border-radius: 30px;
-    box-shadow: 0 22px 60px rgba(15, 23, 42, 0.16);
-    border: 1px solid rgba(148, 163, 184, 0.18);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--card-border);
   }
   &__title { font-family: 'Poppins', sans-serif; font-size: 1.45rem; font-weight: 800; text-align: center; margin-bottom: 1.35rem; letter-spacing: -0.02em; }
   &__form { display: flex; flex-direction: column; gap: 0.95rem; }

@@ -36,8 +36,9 @@ export class HomeComponent implements OnInit {
 
   accept(): void {
     if (!this.current) return;
-    this.friend.acceptSuggestion(this.current.id);
-    this.next();
+    this.friend.acceptSuggestion(this.current.id).subscribe(() => {
+      this.next();
+    });
   }
 
   reject(): void {
@@ -56,8 +57,10 @@ export class HomeComponent implements OnInit {
   }
 
   private refreshSuggestions(): void {
-    this.suggestions = this.friend.getSuggestions(this.currentUser?.id || 'guest');
-    this.currentIndex = 0;
-    this.empty = this.suggestions.length === 0;
+    this.friend.fetchSuggestions().subscribe((suggestions) => {
+      this.suggestions = suggestions;
+      this.currentIndex = 0;
+      this.empty = this.suggestions.length === 0;
+    });
   }
 }

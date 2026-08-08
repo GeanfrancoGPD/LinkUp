@@ -6,20 +6,20 @@
 
   <div class="page-swipe__container">
     <div *ngIf="!empty" class="page-swipe__list">
-      <div *ngFor="let suggestion of suggestions" class="page-swipe__card-wrapper">
+      <div *ngFor="let request of requests" class="page-swipe__card-wrapper">
         <molecule-friend-card
-          [name]="suggestion.firstName + ' ' + suggestion.lastName"
-          [bio]="suggestion.bio || 'Explorando nuevas conexiones'"
-          [mutual]="suggestion.mutual || 0"
-          [avatar]="suggestion.avatar"
-          (accept)="accept(suggestion.id)"
-          (reject)="reject(suggestion.id)"
+          [name]="request.name"
+          [bio]="request.bio"
+          [mutual]="request.mutual"
+          [avatar]="request.avatar"
+          (accept)="accept(request.idSolicitud)"
+          (reject)="reject(request.idSolicitud)"
         ></molecule-friend-card>
       </div>
     </div>
 
     <div *ngIf="empty" class="page-swipe__empty">
-      <p>No hay más sugerencias</p>
+      <p>No tienes solicitudes pendientes</p>
       <button class="page-swipe__back-btn" routerLink="/home">Volver al inicio</button>
     </div>
   </div>
