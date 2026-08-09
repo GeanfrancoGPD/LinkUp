@@ -1,4 +1,6 @@
-<div class="molecule-friend-card" [ngClass]="{ 'molecule-friend-card--large': large, 'molecule-friend-card--accepting': actionState === 'accept', 'molecule-friend-card--rejecting': actionState === 'reject' }">
+<div #cardEl class="molecule-friend-card" [ngClass]="{ 'molecule-friend-card--large': large, 'molecule-friend-card--accepting': actionState === 'accept', 'molecule-friend-card--rejecting': actionState === 'reject' }">
+  <div *ngIf="showActions" class="molecule-friend-card__swipe-hint molecule-friend-card__swipe-hint--reject" [class.is-active]="swipeHint === 'reject'"><i class="fas fa-times"></i></div>
+  <div *ngIf="showActions" class="molecule-friend-card__swipe-hint molecule-friend-card__swipe-hint--accept" [class.is-active]="swipeHint === 'accept'"><i class="fas fa-check"></i></div>
   <div class="molecule-friend-card__avatar">
     <atom-avatar [src]="avatar" [name]="name" size="lg"></atom-avatar>
   </div>
