@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AvatarComponent } from '../../atoms/avatar/avatar.component';
@@ -11,7 +11,7 @@ import { FriendService } from '../../../services/friend.service';
   standalone: true,
   imports: [CommonModule, RouterLink, AvatarComponent, FriendCardComponent],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
   currentUser: any = null;
@@ -19,7 +19,12 @@ export class HomeComponent implements OnInit {
   currentIndex = 0;
   empty = false;
 
-  constructor(private auth: AuthService, private friend: FriendService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private friend: FriendService,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     this.currentUser = this.auth.getCurrentUser();
@@ -27,13 +32,18 @@ export class HomeComponent implements OnInit {
   }
 
   get current(): any {
+    if (!this.suggestions || this.suggestions.length === 0) return null;
     return this.suggestions[this.currentIndex] || null;
   }
 
+  get currentFullName(): string {
+    if (!this.current) return '';
+    const first = this.current.firstName || '';
+    const last = this.current.lastName || '';
+    return `${first}${last}`.trim();
+  }
+
   navigateTo(route: string): void {
-    if (route === '/chats') {
-      console.log('Botón de chats pulsado desde la barra inferior');
-    }
     this.router.navigate([route]);
   }
 
@@ -54,16 +64,24 @@ export class HomeComponent implements OnInit {
     this.currentIndex += 1;
     if (this.currentIndex >= this.suggestions.length) {
       this.refreshSuggestions();
-      this.currentIndex = 0;
+    } else {
+      this.cdr.detectChanges();
     }
-    this.empty = this.suggestions.length === 0;
   }
 
   private refreshSuggestions(): void {
-    this.friend.fetchSuggestions().subscribe((suggestions) => {
-      this.suggestions = suggestions;
-      this.currentIndex = 0;
-      this.empty = this.suggestions.length === 0;
+    this.friend.fetchSuggestions().subscribe({
+      next: (suggestions) => {
+        this.suggestions = suggestions || [];
+        this.currentIndex = 0;
+        this.empty = this.suggestions.length === 0;
+        this.cdr.detectChanges(); // Forzar el renderizado inmediato en pantalla
+      },
+      error: (err) => {
+        console.error('Error cargando sugerencias:', err);
+        this.empty = true;
+        this.cdr.detectChanges();
+      },
     });
   }
 }

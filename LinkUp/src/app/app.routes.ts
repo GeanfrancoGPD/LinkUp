@@ -7,7 +7,7 @@ import { ProfileEditComponent } from './components/pages/profile-edit/profile-ed
 import { ProfileOtherComponent } from './components/pages/profile-other/profile-other.component';
 import { SwipeComponent } from './components/pages/swipe/swipe.component';
 import { ChatListComponent } from './components/pages/chat-list/chat-list.component';
-import { ChatRoomComponent } from './components/pages/chat-room/chat-room.component';
+import { PageChatRoomComponent } from './components/pages/chat-room/chat-room.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -20,6 +20,6 @@ export const routes: Routes = [
   { path: 'swipe', redirectTo: '/solicitudes', pathMatch: 'full' },
   { path: 'solicitudes', component: SwipeComponent },
   { path: 'chats', component: ChatListComponent },
-  { path: 'chat/:id', component: ChatRoomComponent },
-  { path: '**', redirectTo: '/home' } // <-- wildcard correcto
+  { path: 'chat/:id', component: PageChatRoomComponent },
+  { path: '**', redirectTo: '/home' }, // <-- wildcard correcto
 ];

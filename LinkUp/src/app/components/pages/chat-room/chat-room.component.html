@@ -1,36 +1,94 @@
 <div class="page-chat-room">
-  <div class="page-chat-room__header">
-    <button class="page-chat-room__back" routerLink="/chats"><i class="fas fa-arrow-left"></i></button>
+  <!-- Cabecera -->
+  <header class="page-chat-room__header">
+    <button
+      type="button"
+      class="page-chat-room__back"
+      routerLink="/chats"
+      aria-label="Volver a chats"
+    >
+      <i class="fas fa-arrow-left"></i>
+    </button>
     <div class="page-chat-room__info">
-      <h2>{{ conversation?.name }}</h2>
+      <h2>{{ conversation?.name || 'Chat' }}</h2>
       <span>En línea</span>
     </div>
-  </div>
+  </header>
+
+  <!-- Contenedor de Mensajes -->
   <div class="page-chat-room__messages" #messagesContainer>
-    <molecule-chat-message
-      *ngFor="let msg of messages"
-      [text]="msg.text"
-      [image]="msg.image || null"
-      [time]="msg.time"
-      [isOwn]="msg.isOwn"
-      [avatar]="msg.avatar"
-      [name]="msg.name"
-    ></molecule-chat-message>
+    @for (msg of messages; track msg.id) {
+      <div class="chat-message" [class.chat-message--own]="msg.isOwn">
+        <img
+          [src]="msg.avatar || 'assets/images/default-avatar.png'"
+          [alt]="msg.name"
+          class="chat-message__avatar"
+        />
+        <div class="chat-message__bubble">
+          <span class="chat-message__author">{{ msg.name }}</span>
+          @if (msg.image) {
+            <img [src]="msg.image" alt="Adjunto" class="chat-message__image" />
+          }
+          @if (msg.text) {
+            <p class="chat-message__text">{{ msg.text }}</p>
+          }
+          <span class="chat-message__time">{{ msg.time }}</span>
+        </div>
+      </div>
+    }
   </div>
-  <div class="page-chat-room__input">
-    <div *ngIf="selectedImage" class="page-chat-room__image-preview">
-      <img [src]="selectedImage" alt="Imagen seleccionada" />
-      <button type="button" class="page-chat-room__remove-image" (click)="clearSelectedImage()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
+
+  <!-- Entrada de texto -->
+  <footer class="page-chat-room__input">
+    @if (selectedImage) {
+      <div class="page-chat-room__image-preview">
+        <img [src]="selectedImage" alt="Imagen seleccionada" />
+        <button
+          type="button"
+          class="page-chat-room__remove-image"
+          (click)="clearSelectedImage()"
+          aria-label="Quitar imagen"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    }
+
     <div class="page-chat-room__input-wrapper">
-      <input #imageInput type="file" accept="image/*" class="page-chat-room__file-input" (change)="onImageSelected($event)" />
-      <button type="button" class="page-chat-room__image-btn" (click)="openImagePicker()" aria-label="Adjuntar imagen">
+      <input
+        #imageInput
+        type="file"
+        accept="image/*"
+        class="page-chat-room__file-input"
+        (change)="onImageSelected($event)"
+      />
+
+      <button
+        type="button"
+        class="page-chat-room__image-btn"
+        (click)="openImagePicker()"
+        aria-label="Adjuntar imagen"
+      >
         <i class="fas fa-image"></i>
       </button>
-      <input type="text" [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." (keyup.enter)="sendMessage()" class="page-chat-room__input-field" />
-      <button class="page-chat-room__send-btn" [disabled]="!newMessage.trim() && !selectedImage" (click)="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+
+      <input
+        type="text"
+        [(ngModel)]="newMessage"
+        placeholder="Escribe un mensaje..."
+        (keyup.enter)="sendMessage()"
+        class="page-chat-room__input-field"
+      />
+
+      <button
+        type="button"
+        class="page-chat-room__send-btn"
+        [disabled]="!newMessage.trim() && !selectedImage"
+        (click)="sendMessage()"
+        aria-label="Enviar mensaje"
+      >
+        <i class="fas fa-paper-plane"></i>
+      </button>
     </div>
-  </div>
+  </footer>
 </div>

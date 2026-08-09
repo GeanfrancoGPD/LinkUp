@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { User } from '../models/user.model';
 import { environment } from '../../environments/environment';
 
 interface LoginApiResponse {
   success: boolean;
   message?: string;
+  sid?: string; // <-- Campo sid agregado
   user?: {
     id: number;
     email: string;
@@ -46,52 +47,71 @@ export class AuthService {
       fecha_nacimiento: user.birthdate || '',
       sexo: 'Otro',
       biografia: '',
-      foto_perfil: avatarValue
+      foto_perfil: avatarValue,
     };
 
-    return this.http.post<RegisterApiResponse>(`${environment.apiUrl}/register`, payload, { withCredentials: true }).pipe(
-      map((response) => response?.success === true),
-      catchError((error) => {
-        const backendMessage = error?.error?.message || 'No se pudo registrar el usuario';
-        return throwError(() => backendMessage);
+    return this.http
+      .post<RegisterApiResponse>(`${environment.apiUrl}/register`, payload, {
+        withCredentials: true,
       })
-    );
+      .pipe(
+        map((response) => response?.success === true),
+        catchError((error) => {
+          const backendMessage = error?.error?.message || 'No se pudo registrar el usuario';
+          return throwError(() => backendMessage);
+        }),
+      );
   }
 
+  // En AuthService: inyectar ChatService de manera Lazy o reconectar Socket
   login(email: string, password: string): Observable<boolean> {
-    return this.http.post<LoginApiResponse>(`${environment.apiUrl}/login`, { email, password }, { withCredentials: true }).pipe(
-      map((response) => {
-        if (response?.success && response.user) {
-          const mappedUser: User = {
-            id: String(response.user.id),
-            firstName: response.user.nombre || '',
-            lastName: '',
-            username: response.user.email.split('@')[0] || '',
-            email: response.user.email,
-            birthdate: '',
-            password: '',
-            avatar: '',
-            bio: '',
-            joined: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
-          };
+    return this.http
+      .post<LoginApiResponse>(
+        `${environment.apiUrl}/login`,
+        { email, password },
+        { withCredentials: true },
+      )
+      .pipe(
+        map((response) => {
+          if (response?.success && response.user) {
+            if (response.sid) {
+              localStorage.setItem('sid', response.sid);
+            }
 
-          this.currentUser = mappedUser;
-          localStorage.setItem('currentUser', JSON.stringify(mappedUser));
-          return true;
-        }
+            const mappedUser: User = {
+              id: String(response.user.id),
+              firstName: response.user.nombre || '',
+              lastName: '',
+              username: response.user.email.split('@')[0] || '',
+              email: response.user.email,
+              birthdate: '',
+              password: '',
+              avatar: '',
+              bio: '',
+              joined: new Date().toLocaleDateString('es-ES', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              }),
+            };
 
-        return false;
-      }),
-      catchError((error) => {
-        const backendMessage = error?.error?.message || 'Credenciales inválidas';
-        return throwError(() => backendMessage);
-      })
-    );
+            this.currentUser = mappedUser;
+            localStorage.setItem('currentUser', JSON.stringify(mappedUser));
+            return true;
+          }
+          return false;
+        }),
+        catchError((error) => {
+          const backendMessage = error?.error?.message || 'Credenciales inválidas';
+          return throwError(() => backendMessage);
+        }),
+      );
   }
 
   logout(): void {
     this.currentUser = null;
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('sid'); // <-- Limpiar sid al cerrar sesión
   }
 
   getCurrentUser(): User | null {
@@ -102,7 +122,7 @@ export class AuthService {
     this.currentUser = user;
     localStorage.setItem('currentUser', JSON.stringify(user));
     const users = this.getUsers();
-    const idx = users.findIndex(u => u.id === user.id);
+    const idx = users.findIndex((u) => u.id === user.id);
     if (idx !== -1) {
       users[idx] = user;
       localStorage.setItem('users', JSON.stringify(users));
