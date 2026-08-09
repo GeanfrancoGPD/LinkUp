@@ -1,5 +1,6 @@
 import { Server as SocketIOServer, Socket } from "socket.io";
 import { Server as HttpServer } from "http";
+import { createHmac } from "crypto";
 import dotenv from "dotenv";
 import LinkSocket from "../module/LinkSocket.js";
 import DB from "../components/DBComponent.js";
@@ -19,6 +20,8 @@ declare module "socket.io" {
 class SocketServer {
   private db: DB;
   private io: SocketIOServer | null = null;
+  private readonly sessionSecret =
+    process.env.SESSION_SECRET || "mi-clave-secreta";
 
   constructor() {
     this.db = new DB();
@@ -38,11 +41,11 @@ class SocketServer {
       },
     });
 
-    // Middleware de autenticacion: valida el session ID
+    // Middleware de autenticación: valida el session ID
     // enviado por el cliente en el handshake (auth.sid)
     this.io.use(async (socket: Socket, next) => {
       try {
-        const sid = socket.handshake.auth?.sid as string | undefined;
+        const sid = this.resolveSessionId(socket);
 
         if (!sid) {
           return next(new Error("UNAUTHORIZED: session ID requerido"));
@@ -71,6 +74,14 @@ class SocketServer {
       console.log(
         `Socket conectado: ${socket.id} | Usuario: ${socket.user?.nombre} (ID: ${socket.user?.id})`,
       );
+
+      // =========================================================
+      // MEJORA: Unir al socket a su sala personal de usuario
+      // =========================================================
+      if (socket.user?.id) {
+        socket.join(`user_${socket.user.id}`);
+      }
+
       LinkSocket.registrarHandlers(socket, this.io!);
 
       socket.on("disconnect", (reason) => {
@@ -80,6 +91,47 @@ class SocketServer {
 
     console.log("Socket.IO inicializado correctamente");
     return this.io;
+  }
+
+  private resolveSessionId(socket: Socket): string | null {
+    const authSid = socket.handshake.auth?.sid;
+    if (typeof authSid === "string" && authSid.trim() !== "") {
+      return authSid.trim();
+    }
+
+    const cookieHeader = socket.handshake.headers.cookie;
+    if (!cookieHeader) {
+      return null;
+    }
+
+    const match = cookieHeader.match(/(?:^|;\s*)connect\.sid=([^;]+)/);
+    if (!match?.[1]) {
+      return null;
+    }
+
+    const decoded = decodeURIComponent(match[1]);
+    if (!decoded.startsWith("s:")) {
+      return null;
+    }
+
+    const signedValue = decoded.slice(2);
+    const separatorIndex = signedValue.lastIndexOf(".");
+    if (separatorIndex <= 0) {
+      return null;
+    }
+
+    const rawSid = signedValue.slice(0, separatorIndex);
+    const providedSignature = signedValue.slice(separatorIndex + 1);
+    const expectedSignature = createHmac("sha256", this.sessionSecret)
+      .update(rawSid)
+      .digest("base64")
+      .replace(/=+$/g, "");
+
+    if (providedSignature !== expectedSignature) {
+      return null;
+    }
+
+    return rawSid;
   }
 
   /**

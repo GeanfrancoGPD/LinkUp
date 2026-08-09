@@ -101,4 +101,5 @@ router.post("/uploads/mensajes", authMiddleware, async (req, res) => {
 router.post("/uploads/perfil", authMiddleware, async (req, res) => {
   await LinkBO.subirImagenPerfil(req, res);
 });
+
 export default router;

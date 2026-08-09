@@ -5,13 +5,10 @@ import { EVENTOS } from "../interfaces/socket-events.interface";
 class LinkSocket {
   registrarHandlers(socket: Socket, io: SocketIOServer): void {
     socket.on(EVENTOS.UNIRSE_CHAT, (data) => this.unirseChat(socket, data));
-
     socket.on(EVENTOS.SALIR_CHAT, (data) => this.salirChat(socket, data));
-
     socket.on(EVENTOS.MENSAJE, (data, ack) =>
       this.enviarMensaje(socket, io, data, ack),
     );
-
     socket.on(EVENTOS.TYPING, (data) => this.typing(socket, data));
   }
 
@@ -21,6 +18,8 @@ class LinkSocket {
   ): Promise<void> {
     try {
       const id_usuario = socket.user?.id;
+      const id_chat = Number(data?.id_chat);
+
       if (!id_usuario) {
         socket.emit(EVENTOS.ERROR, {
           success: false,
@@ -29,19 +28,18 @@ class LinkSocket {
         return;
       }
 
-      if (!data?.id_chat || typeof data.id_chat !== "number") {
+      if (!Number.isFinite(id_chat) || id_chat <= 0) {
         socket.emit(EVENTOS.ERROR, {
           success: false,
-          message: "id_chat invalido",
+          message: "id_chat inválido",
         });
         return;
       }
 
       const esParticipante = await LinkBO.validarParticipante(
-        data.id_chat,
+        id_chat,
         id_usuario,
       );
-
       if (!esParticipante) {
         socket.emit(EVENTOS.ERROR, {
           success: false,
@@ -50,16 +48,16 @@ class LinkSocket {
         return;
       }
 
-      const room = `chat:${data.id_chat}`;
+      const room = `chat:${id_chat}`;
       socket.join(room);
 
       socket.to(room).emit(EVENTOS.USUARIO_UNIDO, {
-        id_chat: data.id_chat,
+        id_chat,
         id_usuario,
         nombre_usuario: socket.user?.nombre,
       });
 
-      console.log(`Usuario ${id_usuario} se unio a ${room}`);
+      console.log(`[Socket] Usuario ${id_usuario} se unió a la sala ${room}`);
     } catch (error) {
       console.error("Error en chat:unirse:", error);
       socket.emit(EVENTOS.ERROR, {
@@ -74,16 +72,16 @@ class LinkSocket {
     data: { id_chat: number },
   ): Promise<void> {
     const id_usuario = socket.user?.id;
-    const nombre_usuario = socket.user?.nombre || "";
-    if (!id_usuario || !data?.id_chat) return;
+    const id_chat = Number(data?.id_chat);
+    if (!id_usuario || !id_chat) return;
 
-    const room = `chat:${data.id_chat}`;
+    const room = `chat:${id_chat}`;
     socket.leave(room);
 
     socket.to(room).emit(EVENTOS.USUARIO_SALIO, {
-      id_chat: data.id_chat,
+      id_chat,
       id_usuario,
-      nombre_usuario,
+      nombre_usuario: socket.user?.nombre || "",
     });
   }
 
@@ -102,26 +100,43 @@ class LinkSocket {
   ): Promise<void> {
     try {
       const id_usuario = socket.user?.id;
+      const id_chat = Number(data?.id_chat);
+
       if (!id_usuario) {
-        socket.emit(EVENTOS.ERROR, {
-          success: false,
-          message: "No autenticado",
-        });
-        ack?.({ success: false, message: "No autenticado" });
+        const err = { success: false, message: "No autenticado" };
+        socket.emit(EVENTOS.ERROR, err);
+        ack?.(err);
         return;
       }
 
-      if (!data?.id_chat || !data?.contenido?.trim()) {
-        socket.emit(EVENTOS.ERROR, {
+      if (
+        !Number.isFinite(id_chat) ||
+        id_chat <= 0 ||
+        !data?.contenido?.trim()
+      ) {
+        const err = {
           success: false,
-          message: "Datos del mensaje incompletos",
-        });
-        ack?.({ success: false, message: "Datos incompletos" });
+          message: "Datos del mensaje incompletos o inválidos",
+        };
+        socket.emit(EVENTOS.ERROR, err);
+        ack?.(err);
+        return;
+      }
+
+      // Validación del flujo: Requerir que la conexión esté unida a la sala del chat
+      const room = `chat:${id_chat}`;
+      if (!socket.rooms.has(room)) {
+        const err = {
+          success: false,
+          message: "Debes unirte al chat primero (chat:unirse)",
+        };
+        socket.emit(EVENTOS.ERROR, err);
+        ack?.(err);
         return;
       }
 
       const resultado = await LinkBO.procesarMensaje({
-        id_chat: data.id_chat,
+        id_chat,
         id_usuario,
         contenido: data.contenido.trim(),
         tipo: data.tipo,
@@ -139,16 +154,13 @@ class LinkSocket {
         return;
       }
 
-      const room = `chat:${data.id_chat}`;
       io.to(room).emit(EVENTOS.NUEVO_MENSAJE, resultado.mensaje);
       ack?.({ success: true, data: resultado.mensaje });
     } catch (error) {
       console.error("Error en chat:mensaje:", error);
-      socket.emit(EVENTOS.ERROR, {
-        success: false,
-        message: "Error al procesar el mensaje",
-      });
-      ack?.({ success: false, message: "Error interno" });
+      const err = { success: false, message: "Error al procesar el mensaje" };
+      socket.emit(EVENTOS.ERROR, err);
+      ack?.(err);
     }
   }
 
@@ -157,11 +169,12 @@ class LinkSocket {
     data: { id_chat: number; escribiendo: boolean },
   ): void {
     const id_usuario = socket.user?.id;
-    if (!id_usuario || !data?.id_chat) return;
+    const id_chat = Number(data?.id_chat);
+    if (!id_usuario || !id_chat) return;
 
-    const room = `chat:${data.id_chat}`;
+    const room = `chat:${id_chat}`;
     socket.to(room).emit(EVENTOS.USUARIO_TYPING, {
-      id_chat: data.id_chat,
+      id_chat,
       id_usuario,
       nombre_usuario: socket.user?.nombre || "",
       escribiendo: data.escribiendo,

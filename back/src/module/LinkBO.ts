@@ -460,8 +460,8 @@ class LinkBO {
   }
 
   async guardarMensaje(datos: GuardarMensajeDTO): Promise<number> {
-    const id_mensaje = await this.repository.guardarMensaje(datos);
-    return Number(id_mensaje);
+    const mensajeCreado = await this.repository.guardarMensaje(datos);
+    return mensajeCreado.id_mensaje;
   }
 
   // ==========================================

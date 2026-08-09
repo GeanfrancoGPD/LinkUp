@@ -35,6 +35,7 @@ class Session {
     sessionObject.response.json({
       success: true,
       message: "Se ha iniciado sesión correctamente",
+      sid: sessionObject.request.sessionID,
       user: sessionObject.request.session.user,
     });
   }
