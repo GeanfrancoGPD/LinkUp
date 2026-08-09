@@ -67,8 +67,9 @@ app.use(
     rolling: true,
     cookie: {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      // Si el front y back están en dominios o servicios distintos (ej: Vercel + Render):
+      secure: isProduction, // Requiere HTTPS en producción
+      sameSite: isProduction ? "none" : "lax", // 'none' permite cookies entre diferentes dominios
       maxAge: TWO_HOURS_MS,
     },
   }),
